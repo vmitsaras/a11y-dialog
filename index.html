@@ -1,0 +1,711 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>A11y Dialog Demos and Documentation</title>
+    <meta name="description" content="Explore live A11y Dialog examples, install code, keyboard behavior, focus restoration, CSS hooks, and honest native dialog limitations.">
+    <link rel="canonical" href="https://vmitsaras.github.io/a11y-dialog/">
+    <meta name="robots" content="index,follow">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="A11y Dialog">
+    <meta property="og:title" content="A11y Dialog Demos and Documentation">
+    <meta property="og:description" content="Explore live A11y Dialog examples, install code, keyboard behavior, focus restoration, CSS hooks, and honest native dialog limitations.">
+    <meta property="og:url" content="https://vmitsaras.github.io/a11y-dialog/">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="A11y Dialog Demos and Documentation">
+    <meta name="twitter:description" content="Explore live A11y Dialog examples, install code, keyboard behavior, focus restoration, CSS hooks, and honest native dialog limitations.">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebPage",
+            "@id": "https://vmitsaras.github.io/a11y-dialog/#webpage",
+            "url": "https://vmitsaras.github.io/a11y-dialog/",
+            "name": "A11y Dialog Demos and Documentation",
+            "description": "Explore live A11y Dialog examples, install code, keyboard behavior, focus restoration, CSS hooks, and honest native dialog limitations.",
+            "inLanguage": "en",
+            "mainEntity": {
+              "@id": "https://vmitsaras.github.io/a11y-dialog/#software"
+            }
+          },
+          {
+            "@type": "SoftwareSourceCode",
+            "@id": "https://vmitsaras.github.io/a11y-dialog/#software",
+            "name": "A11y Dialog",
+            "description": "A framework-agnostic native dialog helper with accessible focus, keyboard, lifecycle, and cleanup behavior.",
+            "codeRepository": "https://github.com/vmitsaras/a11y-dialog",
+            "programmingLanguage": [
+              "TypeScript",
+              "JavaScript"
+            ],
+            "runtimePlatform": "Browser",
+            "version": "0.0.0",
+            "license": "https://github.com/vmitsaras/a11y-dialog/blob/main/LICENSE",
+            "keywords": [
+              "accessibility",
+              "a11y",
+              "dialog",
+              "modal",
+              "focus-management",
+              "typescript"
+            ],
+            "featureList": [
+              "Native dialog initialization",
+              "Labelled dialog markup checks",
+              "Focus movement and restoration",
+              "Escape and Tab keyboard behavior",
+              "Lifecycle events and cleanup"
+            ],
+            "author": {
+              "@id": "https://github.com/vmitsaras/#person"
+            },
+            "creator": {
+              "@id": "https://github.com/vmitsaras/#person"
+            },
+            "sameAs": [
+              "https://github.com/vmitsaras/a11y-dialog",
+              "https://www.npmjs.com/package/a11y-dialog"
+            ],
+            "targetProduct": {
+              "@type": "SoftwareApplication",
+              "name": "A11y Dialog",
+              "applicationCategory": "DeveloperApplication",
+              "operatingSystem": "Any",
+              "runtimePlatform": "Browser"
+            }
+          },
+          {
+            "@type": "Person",
+            "@id": "https://github.com/vmitsaras/#person",
+            "name": "Vasileios Mitsaras",
+            "url": "https://github.com/vmitsaras/",
+            "sameAs": [
+              "https://github.com/vmitsaras/",
+              "https://linkedin.com/in/vasilis-mitsaras"
+            ]
+          }
+        ]
+      }
+    </script>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        line-height: 1.5;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        background: #f7fafc;
+        color: #17202a;
+        margin: 0;
+      }
+
+      a {
+        color: #075985;
+        font-weight: 700;
+      }
+
+      a:focus-visible {
+        outline: 3px solid #0b5fff;
+        outline-offset: 3px;
+      }
+
+      code,
+      kbd {
+        background: #eef6ff;
+        border: 1px solid #b9d7ef;
+        border-radius: 0.25rem;
+        color: #0f3d62;
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+        font-size: 0.95em;
+        padding: 0.1rem 0.25rem;
+      }
+
+      pre {
+        background: #122033;
+        border-radius: 0.5rem;
+        color: #f8fafc;
+        margin: 0;
+        overflow-x: auto;
+        padding: 1rem;
+      }
+
+      pre code {
+        background: transparent;
+        border: 0;
+        color: inherit;
+        display: block;
+        min-inline-size: max-content;
+        padding: 0;
+      }
+
+      .skip-link {
+        background: #122033;
+        color: #ffffff;
+        inset-block-start: 0.5rem;
+        inset-inline-start: 0.5rem;
+        padding: 0.75rem 1rem;
+        position: fixed;
+        transform: translateY(-150%);
+        z-index: 2;
+      }
+
+      .skip-link:focus {
+        transform: translateY(0);
+      }
+
+      .demo-page {
+        inline-size: min(72rem, calc(100% - 2rem));
+        margin-inline: auto;
+      }
+
+      .demo-hero {
+        display: grid;
+        gap: 1rem;
+        padding-block: 2rem 2.5rem;
+      }
+
+      .demo-hero__eyebrow,
+      .demo-section__eyebrow,
+      .demo-card__eyebrow {
+        color: #a14118;
+        font-size: 0.85rem;
+        font-weight: 800;
+        letter-spacing: 0;
+        margin: 0;
+        text-transform: uppercase;
+      }
+
+      .demo-hero h1 {
+        font-size: 4rem;
+        line-height: 1;
+        margin: 0;
+        max-inline-size: 12ch;
+      }
+
+      .demo-hero__description {
+        font-size: 1.12rem;
+        margin: 0;
+        max-inline-size: 58rem;
+      }
+
+      .demo-nav,
+      .demo-card__links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+      }
+
+      .demo-button {
+        align-items: center;
+        background: #0f6f5c;
+        border: 1px solid #0f6f5c;
+        border-radius: 0.375rem;
+        color: #ffffff;
+        display: inline-flex;
+        font: inherit;
+        font-weight: 800;
+        justify-content: center;
+        min-block-size: 2.75rem;
+        padding: 0.65rem 1rem;
+        text-decoration: none;
+      }
+
+      .demo-button--secondary {
+        background: #ffffff;
+        border-color: #7d8f84;
+        color: #17202a;
+      }
+
+      .demo-section {
+        border-block-start: 1px solid #ccd7e2;
+        display: grid;
+        gap: 1rem;
+        padding-block: 2rem;
+      }
+
+      .demo-section__header {
+        display: grid;
+        gap: 0.35rem;
+      }
+
+      .demo-section__header h2,
+      .demo-card h3,
+      .demo-code h3,
+      .demo-preview h2 {
+        margin: 0;
+      }
+
+      .demo-section__header p,
+      .demo-section > p,
+      .demo-card p,
+      .demo-preview p {
+        margin: 0;
+        max-inline-size: 58rem;
+      }
+
+      .demo-grid {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+      }
+
+      .demo-facts {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+        margin: 0;
+      }
+
+      .demo-card,
+      .demo-code,
+      .demo-facts div,
+      .demo-note,
+      .demo-preview {
+        background: #ffffff;
+        border: 1px solid #c6d3df;
+        border-radius: 0.5rem;
+        padding: 1rem;
+      }
+
+      .demo-card,
+      .demo-code,
+      .demo-note,
+      .demo-preview {
+        display: grid;
+        gap: 0.85rem;
+      }
+
+      .demo-facts dt {
+        color: #4f6070;
+        font-size: 0.85rem;
+        font-weight: 800;
+        margin-block-end: 0.25rem;
+        text-transform: uppercase;
+      }
+
+      .demo-facts dd {
+        margin: 0;
+      }
+
+      .demo-list {
+        margin-block: 0;
+        padding-inline-start: 1.25rem;
+      }
+
+      .demo-list li + li {
+        margin-block-start: 0.5rem;
+      }
+
+      .demo-preview {
+        grid-template-columns: minmax(0, 1fr) minmax(16rem, 0.7fr);
+      }
+
+      .demo-preview__dialog {
+        align-self: start;
+        background: #ffffff;
+        border: 1px solid #6b7280;
+        border-radius: 0.5rem;
+        box-shadow: 0 1rem 2rem rgb(18 32 51 / 0.16);
+        display: grid;
+        gap: 0.75rem;
+        padding: 1rem;
+      }
+
+      .demo-preview__title {
+        align-items: start;
+        display: flex;
+        gap: 1rem;
+        justify-content: space-between;
+      }
+
+      .demo-preview__close {
+        background: #ffffff;
+        border: 1px solid #6b7280;
+        border-radius: 0.375rem;
+        font-weight: 800;
+        min-block-size: 2.25rem;
+        padding: 0.35rem 0.6rem;
+      }
+
+      .demo-preview__action {
+        background: #0f6f5c;
+        border-radius: 0.375rem;
+        color: #ffffff;
+        font-weight: 800;
+        inline-size: fit-content;
+        min-block-size: 2.5rem;
+        padding: 0.55rem 0.85rem;
+      }
+
+      .demo-footer {
+        --demo-footer-background: #122033;
+        --demo-footer-color: #f8fafc;
+        --demo-footer-muted-color: #cad7e5;
+        --demo-footer-link-color: #ffffff;
+        --demo-footer-border-color: rgba(255, 255, 255, 0.16);
+        --demo-footer-focus-color: #facc15;
+        --demo-footer-radius: 0.5rem;
+        --demo-footer-space: clamp(1rem, 2vw, 1.5rem);
+
+        --_background: var(--demo-footer-background);
+        --_color: var(--demo-footer-color);
+        --_muted-color: var(--demo-footer-muted-color);
+        --_link-color: var(--demo-footer-link-color);
+        --_border-color: var(--demo-footer-border-color);
+        --_focus-color: var(--demo-footer-focus-color);
+        --_radius: var(--demo-footer-radius);
+        --_space: var(--demo-footer-space);
+
+        background: var(--_background);
+        border: 1px solid var(--_border-color);
+        border-radius: var(--_radius);
+        color: var(--_color);
+        inline-size: min(72rem, calc(100% - 2rem));
+        margin: clamp(1rem, 4vw, 2.5rem) auto 2rem;
+        padding: var(--_space);
+      }
+
+      .demo-footer__inner {
+        align-items: center;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem 2rem;
+        justify-content: space-between;
+      }
+
+      .demo-footer__brand {
+        display: grid;
+        gap: 0.35rem;
+      }
+
+      .demo-footer__eyebrow,
+      .demo-footer__credit,
+      .demo-footer__meta {
+        margin: 0;
+      }
+
+      .demo-footer__eyebrow,
+      .demo-footer__meta {
+        color: var(--_muted-color);
+        font-size: 0.875rem;
+        line-height: 1.5;
+      }
+
+      .demo-footer__credit {
+        font-size: 1rem;
+        line-height: 1.5;
+      }
+
+      .demo-footer__plugin {
+        font-weight: 700;
+      }
+
+      .demo-footer__links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem 1rem;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .demo-footer__link {
+        color: var(--_link-color);
+        text-decoration-thickness: 0.08em;
+        text-underline-offset: 0.2em;
+      }
+
+      .demo-footer__link:hover {
+        text-decoration-thickness: 0.15em;
+      }
+
+      .demo-footer__link:focus-visible {
+        border-radius: 0.25rem;
+        outline: 3px solid var(--_focus-color);
+        outline-offset: 0.25rem;
+      }
+
+      .demo-footer__separator {
+        margin-inline: 0.35rem;
+      }
+
+      @media (max-width: 46rem) {
+        .demo-page {
+          inline-size: min(100% - 1rem, 72rem);
+        }
+
+        .demo-hero {
+          padding-block-start: 1rem;
+        }
+
+        .demo-hero h1 {
+          font-size: 2.5rem;
+        }
+
+        .demo-preview {
+          grid-template-columns: 1fr;
+        }
+
+        .demo-footer__inner {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .demo-footer__links {
+          flex-direction: column;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+      }
+
+      @media (forced-colors: active) {
+        .demo-button,
+        .demo-card,
+        .demo-code,
+        .demo-facts div,
+        .demo-note,
+        .demo-preview,
+        .demo-preview__dialog,
+        .demo-preview__close,
+        .demo-footer {
+          border: 2px solid CanvasText;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to demo content</a>
+
+    <header class="demo-page demo-hero">
+      <p class="demo-hero__eyebrow">Native dialog helper</p>
+      <h1>A11y Dialog</h1>
+      <p class="demo-hero__description">
+        A framework-agnostic TypeScript helper for native <code>&lt;dialog&gt;</code>
+        elements with labelled markup checks, focus movement, Escape handling,
+        lifecycle events, and cleanup behavior.
+      </p>
+      <nav class="demo-nav" aria-label="Primary demo links">
+        <a class="demo-button" href="examples/basic/">Open basic demo</a>
+        <a class="demo-button demo-button--secondary" href="#examples">Browse examples</a>
+        <a class="demo-button demo-button--secondary" href="https://github.com/vmitsaras/a11y-dialog">GitHub repository</a>
+      </nav>
+    </header>
+
+    <main class="demo-page" id="main-content">
+      <section class="demo-section" aria-labelledby="facts-title">
+        <div class="demo-section__header">
+          <p class="demo-section__eyebrow">Overview</p>
+          <h2 id="facts-title">Quick facts</h2>
+        </div>
+        <dl class="demo-facts">
+          <div>
+            <dt>Package</dt>
+            <dd><code>a11y-dialog</code></dd>
+          </div>
+          <div>
+            <dt>Pattern</dt>
+            <dd>Native modal dialog helper</dd>
+          </div>
+          <div>
+            <dt>Runtime</dt>
+            <dd>Framework agnostic TypeScript output</dd>
+          </div>
+          <div>
+            <dt>Dependencies</dt>
+            <dd>No runtime dependencies</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="demo-section" id="examples" aria-labelledby="examples-title">
+        <div class="demo-section__header">
+          <p class="demo-section__eyebrow">Live demos</p>
+          <h2 id="examples-title">Choose a scenario</h2>
+          <p>
+            Each example imports the built package from <code>dist</code>, keeps
+            plugin markup copyable, and documents the keyboard and screen reader
+            behavior to verify.
+          </p>
+        </div>
+        <div class="demo-grid">
+          <article class="demo-card">
+            <p class="demo-card__eyebrow">Reference</p>
+            <h3>Basic dialog</h3>
+            <p>
+              Compact docs-style reference for markup, initialization, keyboard
+              behavior, CSS hooks, and limitations.
+            </p>
+            <div class="demo-card__links">
+              <a class="demo-button" href="examples/basic/">Open demo</a>
+              <a class="demo-button demo-button--secondary" href="examples/basic/README.md">Read notes</a>
+            </div>
+          </article>
+          <article class="demo-card">
+            <p class="demo-card__eyebrow">Product flow</p>
+            <h3>Settings review dialog</h3>
+            <p>
+              SaaS settings review flow with initial focus, Escape close, focus
+              restoration, and status text.
+            </p>
+            <div class="demo-card__links">
+              <a class="demo-button" href="examples/settings-review/">Open demo</a>
+              <a class="demo-button demo-button--secondary" href="examples/settings-review/README.md">Read notes</a>
+            </div>
+          </article>
+          <article class="demo-card">
+            <p class="demo-card__eyebrow">Integration</p>
+            <h3>Validated callback dialog</h3>
+            <p>
+              A11y Form Validator inside a native modal dialog, including
+              summary focus and form-state reset.
+            </p>
+            <div class="demo-card__links">
+              <a class="demo-button" href="examples/form-validator-dialog/">Open demo</a>
+              <a class="demo-button demo-button--secondary" href="examples/form-validator-dialog/README.md">Read notes</a>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="demo-section" aria-labelledby="preview-title">
+        <div class="demo-preview">
+          <div>
+            <p class="demo-section__eyebrow">What it manages</p>
+            <h2 id="preview-title">A small helper around real dialog markup</h2>
+            <p>
+              Use a native <code>&lt;dialog&gt;</code>, reference a visible
+              heading with <code>aria-labelledby</code>, and put close behavior
+              on real buttons. The helper opens the modal, moves focus inside,
+              keeps Tab in the dialog as a fallback, and restores focus when it
+              closes.
+            </p>
+          </div>
+          <div class="demo-preview__dialog" aria-hidden="true">
+            <div class="demo-preview__title">
+              <strong>Review settings</strong>
+              <span class="demo-preview__close">Close</span>
+            </div>
+            <p>Confirm these settings before continuing.</p>
+            <span class="demo-preview__action">Confirm settings</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="demo-section" aria-labelledby="usage-title">
+        <div class="demo-section__header">
+          <p class="demo-section__eyebrow">Developer copy path</p>
+          <h2 id="usage-title">Install and initialize</h2>
+        </div>
+        <div class="demo-grid">
+          <div class="demo-code">
+            <h3>Install</h3>
+            <pre><code>npm install a11y-dialog</code></pre>
+          </div>
+          <div class="demo-code">
+            <h3>JavaScript</h3>
+            <pre><code>import { createA11yDialog } from "a11y-dialog";
+import "a11y-dialog/styles.css";
+
+const dialog = document.querySelector("#settings-dialog");
+const trigger = document.querySelector("#settings-trigger");
+
+if (dialog &amp;&amp; trigger) {
+  const instance = createA11yDialog(dialog);
+
+  trigger.addEventListener("click", () =&gt; {
+    instance.open(trigger);
+  });
+}</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <section class="demo-section" aria-labelledby="accessibility-title">
+        <div class="demo-section__header">
+          <p class="demo-section__eyebrow">Accessibility behavior</p>
+          <h2 id="accessibility-title">What to verify</h2>
+        </div>
+        <div class="demo-grid">
+          <section class="demo-note" aria-labelledby="keyboard-title">
+            <h3 id="keyboard-title">Keyboard</h3>
+            <ul class="demo-list">
+              <li><kbd>Enter</kbd> and <kbd>Space</kbd> use native button activation.</li>
+              <li><kbd>Tab</kbd> and <kbd>Shift+Tab</kbd> stay inside the open modal dialog.</li>
+              <li><kbd>Escape</kbd> closes the dialog when <code>closeOnEscape</code> is true.</li>
+            </ul>
+          </section>
+          <section class="demo-note" aria-labelledby="focus-title">
+            <h3 id="focus-title">Focus</h3>
+            <ul class="demo-list">
+              <li>Focus moves to the configured initial target or the first useful fallback.</li>
+              <li>Focus returns to the opener when restoration is enabled and the opener remains connected.</li>
+              <li>Destroyed instances remove listeners and restore changed state.</li>
+            </ul>
+          </section>
+          <section class="demo-note" aria-labelledby="limits-title">
+            <h3 id="limits-title">Limits</h3>
+            <ul class="demo-list">
+              <li>This package does not polyfill native <code>&lt;dialog&gt;</code>.</li>
+              <li>It does not validate form fields or create error summaries.</li>
+              <li>Manual screen reader testing is still needed for supported browser and assistive technology pairs.</li>
+            </ul>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <footer class="demo-footer" data-demo-footer>
+      <div class="demo-footer__inner">
+        <div class="demo-footer__brand">
+          <p class="demo-footer__eyebrow">Accessibility plugin demo</p>
+
+          <p class="demo-footer__credit">
+            <span class="demo-footer__plugin">A11y Dialog</span>
+            <span class="demo-footer__separator" aria-hidden="true">&middot;</span>
+            Built by
+            <a class="demo-footer__link" href="https://github.com/vmitsaras">Vasileios Mitsaras</a>
+            <span class="demo-footer__separator" aria-hidden="true">&middot;</span>
+            <a class="demo-footer__link" href="https://linkedin.com/in/vasilis-mitsaras">LinkedIn profile</a>
+          </p>
+
+          <p class="demo-footer__meta">
+            <span>a11y-dialog</span>
+            <span class="demo-footer__separator" aria-hidden="true">&middot;</span>
+            <span>MIT License</span>
+          </p>
+        </div>
+
+        <nav class="demo-footer__nav" aria-label="Project links">
+          <ul class="demo-footer__links">
+            <li class="demo-footer__item">
+              <a class="demo-footer__link" href="https://github.com/vmitsaras/a11y-dialog">GitHub repository</a>
+            </li>
+            <li class="demo-footer__item">
+              <a class="demo-footer__link" href="https://www.npmjs.com/package/a11y-dialog">npm package</a>
+            </li>
+            <li class="demo-footer__item">
+              <a class="demo-footer__link" href="https://github.com/vmitsaras/a11y-dialog#readme">Documentation</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>

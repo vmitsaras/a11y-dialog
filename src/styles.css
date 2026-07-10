@@ -1,0 +1,163 @@
+.a11y-dialog {
+  --_background: var(--a11y-dialog-background, #ffffff);
+  --_border-color: var(--a11y-dialog-border-color, #6b7280);
+  --_border-radius: var(--a11y-dialog-border-radius, 0.5rem);
+  --_color: var(--a11y-dialog-color, #111827);
+  --_focus-color: var(--a11y-dialog-focus-color, #0b5fff);
+  --_max-inline-size: var(--a11y-dialog-max-inline-size, 42rem);
+  --_padding: var(--a11y-dialog-padding, 1.25rem);
+  --_shadow: var(--a11y-dialog-shadow, 0 1.5rem 4rem rgb(17 24 39 / 0.28));
+  --_backdrop-color: var(--a11y-dialog-backdrop-color, rgb(17 24 39 / 0.62));
+  --_button-background: var(--a11y-dialog-button-background, #14532d);
+  --_button-color: var(--a11y-dialog-button-color, #ffffff);
+
+  background: var(--_background);
+  border: 1px solid var(--_border-color);
+  border-radius: var(--_border-radius);
+  box-shadow: var(--_shadow);
+  color: var(--_color);
+  inline-size: min(var(--_max-inline-size), calc(100vw - 2rem));
+  margin: auto;
+  max-block-size: calc(100dvh - 2rem);
+  overflow: auto;
+  padding: 0;
+  transform: translateY(0.25rem);
+  transition:
+    opacity 160ms ease,
+    transform 160ms ease;
+}
+
+.a11y-dialog[open] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.a11y-dialog::backdrop {
+  background: var(--_backdrop-color);
+}
+
+.a11y-dialog__surface {
+  display: grid;
+  gap: 1rem;
+  min-inline-size: 0;
+  padding: var(--_padding);
+}
+
+.a11y-dialog__header {
+  align-items: start;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+.a11y-dialog__title {
+  font-size: 1.35rem;
+  line-height: 1.2;
+  margin: 0;
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+
+.a11y-dialog__description,
+.a11y-dialog__body p {
+  line-height: 1.6;
+}
+
+.a11y-dialog__description {
+  margin-block: 0 0.75rem;
+}
+
+.a11y-dialog__body {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.a11y-dialog__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: end;
+  min-inline-size: 0;
+}
+
+.a11y-dialog__button {
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #6b7280;
+  border-radius: 0.375rem;
+  color: #111827;
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  font-weight: 700;
+  justify-content: center;
+  min-block-size: 2.75rem;
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+  padding: 0.6rem 0.95rem;
+  text-align: center;
+}
+
+.a11y-dialog__button--primary {
+  background: var(--_button-background);
+  border-color: var(--_button-background);
+  color: var(--_button-color);
+}
+
+.a11y-dialog__button:focus-visible,
+.a11y-dialog :focus-visible {
+  outline: 3px solid var(--_focus-color);
+  outline-offset: 3px;
+}
+
+.a11y-dialog__button:hover {
+  filter: brightness(0.96);
+}
+
+@media (max-width: 40rem) {
+  .a11y-dialog {
+    inline-size: min(100%, calc(100vw - 1rem));
+  }
+
+  .a11y-dialog__header,
+  .a11y-dialog__actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .a11y-dialog__button {
+    inline-size: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .a11y-dialog,
+  .a11y-dialog::backdrop {
+    transition-duration: 0.001ms;
+  }
+
+  .a11y-dialog {
+    transform: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .a11y-dialog {
+    border: 2px solid CanvasText;
+    box-shadow: none;
+  }
+
+  .a11y-dialog::backdrop {
+    background: CanvasText;
+    opacity: 0.55;
+  }
+
+  .a11y-dialog__button {
+    border-color: ButtonText;
+  }
+
+  .a11y-dialog__button:focus-visible,
+  .a11y-dialog :focus-visible {
+    outline-color: Highlight;
+  }
+}

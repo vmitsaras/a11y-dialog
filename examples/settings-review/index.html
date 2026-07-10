@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Settings Review Dialog Example | A11y Dialog</title>
+    <meta name="description" content="Review a SaaS workspace settings flow that uses A11y Dialog for initial focus, Escape close, status text, and focus restoration.">
+    <link rel="canonical" href="https://vmitsaras.github.io/a11y-dialog/examples/settings-review/">
+    <meta name="robots" content="index,follow">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="A11y Dialog">
+    <meta property="og:title" content="Settings Review Dialog Example | A11y Dialog">
+    <meta property="og:description" content="Review a SaaS workspace settings flow that uses A11y Dialog for initial focus, Escape close, status text, and focus restoration.">
+    <meta property="og:url" content="https://vmitsaras.github.io/a11y-dialog/examples/settings-review/">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Settings Review Dialog Example | A11y Dialog">
+    <meta name="twitter:description" content="Review a SaaS workspace settings flow that uses A11y Dialog for initial focus, Escape close, status text, and focus restoration.">
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../../dist/styles.css">
+    <link rel="stylesheet" href="./styles.css">
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebPage",
+            "@id": "https://vmitsaras.github.io/a11y-dialog/examples/settings-review/#webpage",
+            "url": "https://vmitsaras.github.io/a11y-dialog/examples/settings-review/",
+            "name": "Settings Review Dialog Example | A11y Dialog",
+            "description": "Review a SaaS workspace settings flow that uses A11y Dialog for initial focus, Escape close, status text, and focus restoration.",
+            "inLanguage": "en",
+            "mainEntity": {
+              "@id": "https://vmitsaras.github.io/a11y-dialog/examples/settings-review/#software"
+            }
+          },
+          {
+            "@type": "SoftwareSourceCode",
+            "@id": "https://vmitsaras.github.io/a11y-dialog/examples/settings-review/#software",
+            "name": "A11y Dialog",
+            "description": "A framework-agnostic native dialog helper with accessible focus, keyboard, lifecycle, and cleanup behavior.",
+            "codeRepository": "https://github.com/vmitsaras/a11y-dialog",
+            "programmingLanguage": [
+              "TypeScript",
+              "JavaScript"
+            ],
+            "runtimePlatform": "Browser",
+            "version": "0.0.0",
+            "license": "https://github.com/vmitsaras/a11y-dialog/blob/main/LICENSE",
+            "keywords": [
+              "accessibility",
+              "a11y",
+              "dialog",
+              "modal",
+              "focus-management",
+              "typescript"
+            ],
+            "featureList": [
+              "SaaS settings review dialog",
+              "Initial focus on primary action",
+              "Escape and button close behavior",
+              "Focus restoration to opener",
+              "Outcome status text"
+            ],
+            "author": {
+              "@id": "https://github.com/vmitsaras/#person"
+            },
+            "creator": {
+              "@id": "https://github.com/vmitsaras/#person"
+            },
+            "sameAs": [
+              "https://github.com/vmitsaras/a11y-dialog",
+              "https://www.npmjs.com/package/a11y-dialog"
+            ],
+            "targetProduct": {
+              "@type": "SoftwareApplication",
+              "name": "A11y Dialog",
+              "applicationCategory": "DeveloperApplication",
+              "operatingSystem": "Any",
+              "runtimePlatform": "Browser"
+            }
+          },
+          {
+            "@type": "Person",
+            "@id": "https://github.com/vmitsaras/#person",
+            "name": "Vasileios Mitsaras",
+            "url": "https://github.com/vmitsaras/",
+            "sameAs": [
+              "https://github.com/vmitsaras/",
+              "https://linkedin.com/in/vasilis-mitsaras"
+            ]
+          }
+        ]
+      }
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to demo content</a>
+
+    <main class="demo-page" id="main-content">
+      <header class="demo-hero">
+        <p class="demo-hero__eyebrow">A11y Dialog example</p>
+        <h1>Settings review dialog</h1>
+        <p>
+          Review workspace notification and security changes in a native modal
+          dialog before saving them. The example focuses on initial focus,
+          Escape close, status text, and focus restoration.
+        </p>
+      </header>
+
+      <section class="demo-brief" aria-labelledby="scenario-title">
+        <h2 id="scenario-title">Scenario</h2>
+        <p>
+          A SaaS admin is about to save changes that affect alerts and security
+          reviews for the whole workspace. The dialog gives them one concise
+          checkpoint before the settings are applied.
+        </p>
+        <p>
+          User goal: review the proposed settings, choose whether to save or
+          cancel, and return to the same place in the page after the dialog
+          closes.
+        </p>
+      </section>
+
+      <section class="demo-instructions" aria-labelledby="try-title">
+        <h2 id="try-title">Try it</h2>
+        <ul>
+          <li>Open the review dialog with the primary button.</li>
+          <li>Confirm focus moves to <strong>Save reviewed settings</strong>.</li>
+          <li>Use Tab and Shift+Tab to move through the dialog controls.</li>
+          <li>Close with Escape, Cancel, or Save and check the status message.</li>
+          <li>Confirm focus returns to <strong>Review workspace changes</strong>.</li>
+        </ul>
+      </section>
+
+      <section class="demo-stage" aria-labelledby="example-title">
+        <div class="demo-stage__header">
+          <p class="demo-stage__eyebrow">Live example</p>
+          <h2 id="example-title">Workspace changes</h2>
+          <p>
+            The cards below are regular page content. The dialog only appears
+            when the admin asks to review the changes.
+          </p>
+        </div>
+
+        <div class="demo-summary" aria-label="Pending workspace setting changes">
+          <article class="demo-change">
+            <h3>Critical incident alerts</h3>
+            <p>Route critical incidents to workspace owners and the on-call channel.</p>
+            <span class="demo-badge">Enabled</span>
+          </article>
+          <article class="demo-change">
+            <h3>Weekly access review</h3>
+            <p>Send reviewers a Friday summary of new admin access grants.</p>
+            <span class="demo-badge demo-badge--attention">Needs review</span>
+          </article>
+          <article class="demo-change">
+            <h3>Billing export reminders</h3>
+            <p>Keep monthly CSV export reminders active for finance leads.</p>
+            <span class="demo-badge demo-badge--neutral">Unchanged</span>
+          </article>
+        </div>
+
+        <div class="demo-actions">
+          <button class="demo-button" id="workspace-review-trigger" type="button">
+            Review workspace changes
+          </button>
+        </div>
+
+        <p class="demo-status" data-demo-status role="status">
+          No settings have been saved in this demo.
+        </p>
+
+        <dialog
+          class="a11y-dialog"
+          id="workspace-review-dialog"
+          data-a11y-dialog
+          aria-labelledby="workspace-review-title"
+          aria-describedby="workspace-review-description"
+        >
+          <div class="a11y-dialog__surface">
+            <header class="a11y-dialog__header">
+              <h2 class="a11y-dialog__title" id="workspace-review-title">
+                Save workspace settings?
+              </h2>
+              <button
+                class="a11y-dialog__button"
+                type="button"
+                data-a11y-dialog-close
+                data-demo-outcome="Settings review closed. No settings were changed."
+              >
+                Close
+              </button>
+            </header>
+
+            <div class="a11y-dialog__body">
+              <p class="a11y-dialog__description" id="workspace-review-description">
+                These changes affect workspace notifications and security review
+                reminders. Review the summary before saving.
+              </p>
+
+              <dl class="demo-review-list">
+                <div>
+                  <dt>Critical incident alerts</dt>
+                  <dd>Enabled for workspace owners and the on-call channel.</dd>
+                </div>
+                <div>
+                  <dt>Weekly access review</dt>
+                  <dd>Friday reminders will be sent to assigned reviewers.</dd>
+                </div>
+                <div>
+                  <dt>Billing export reminders</dt>
+                  <dd>No change. Finance leads keep the monthly reminder.</dd>
+                </div>
+              </dl>
+            </div>
+
+            <footer class="a11y-dialog__actions">
+              <button
+                class="a11y-dialog__button"
+                type="button"
+                data-a11y-dialog-close
+                data-demo-outcome="Settings review canceled. No workspace settings were changed."
+              >
+                Cancel
+              </button>
+              <button
+                class="a11y-dialog__button a11y-dialog__button--primary"
+                type="button"
+                data-a11y-dialog-close
+                data-a11y-dialog-initial-focus
+                data-demo-outcome="Workspace settings saved in this demo. Focus returned to Review workspace changes."
+              >
+                Save reviewed settings
+              </button>
+            </footer>
+          </div>
+        </dialog>
+      </section>
+
+      <section class="demo-notes" aria-labelledby="a11y-title">
+        <h2 id="a11y-title">Accessibility notes</h2>
+        <ul>
+          <li>The dialog is a native <code>&lt;dialog&gt;</code> with a visible heading referenced by <code>aria-labelledby</code>.</li>
+          <li>The description is short and connected with <code>aria-describedby</code>.</li>
+          <li>Every opener and close control is a real <code>button</code>.</li>
+          <li>The primary save action is marked with <code>data-a11y-dialog-initial-focus</code>.</li>
+          <li>Escape closes the dialog because <code>closeOnEscape</code> keeps its default value of <code>true</code>.</li>
+          <li>The outside status region reports the demo result after cancel, close, or save.</li>
+          <li>Manual screen reader testing is still required for your supported browser and assistive technology combinations.</li>
+        </ul>
+      </section>
+
+      <section class="demo-notes" aria-labelledby="developer-title">
+        <h2 id="developer-title">Developer notes</h2>
+        <ul>
+          <li>Import the plugin from <code>../../dist/index.js</code> for this local static example.</li>
+          <li>Import package CSS from <code>../../dist/styles.css</code> and demo-only CSS from <code>./styles.css</code>.</li>
+          <li>Use <code>[data-a11y-dialog]</code> on the native dialog when using the package selectors.</li>
+          <li>Use <code>[data-a11y-dialog-close]</code> only on real buttons.</li>
+          <li>This example uses default options; no runtime source changes are needed.</li>
+        </ul>
+      </section>
+    </main>
+
+    <footer class="demo-footer" data-demo-footer>
+      <div class="demo-footer__inner">
+        <div class="demo-footer__brand">
+          <p class="demo-footer__eyebrow">Accessibility plugin demo</p>
+
+          <p class="demo-footer__credit">
+            <span class="demo-footer__plugin">A11y Dialog</span>
+            <span class="demo-footer__separator" aria-hidden="true">&middot;</span>
+            Built by
+            <a class="demo-footer__link" href="https://github.com/vmitsaras">Vasileios Mitsaras</a>
+            <span class="demo-footer__separator" aria-hidden="true">&middot;</span>
+            <a class="demo-footer__link" href="https://linkedin.com/in/vasilis-mitsaras">LinkedIn profile</a>
+          </p>
+
+          <p class="demo-footer__meta">
+            <span>a11y-dialog</span>
+            <span class="demo-footer__separator" aria-hidden="true">&middot;</span>
+            <span>MIT License</span>
+          </p>
+        </div>
+
+        <nav class="demo-footer__nav" aria-label="Project links">
+          <ul class="demo-footer__links">
+            <li class="demo-footer__item">
+              <a class="demo-footer__link" href="https://github.com/vmitsaras/a11y-dialog">GitHub repository</a>
+            </li>
+            <li class="demo-footer__item">
+              <a class="demo-footer__link" href="https://www.npmjs.com/package/a11y-dialog">npm package</a>
+            </li>
+            <li class="demo-footer__item">
+              <a class="demo-footer__link" href="https://github.com/vmitsaras/a11y-dialog#readme">Documentation</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <script type="module">
+      import { createA11yDialog } from "../../dist/index.js";
+
+      const dialog = document.querySelector("#workspace-review-dialog");
+      const trigger = document.querySelector("#workspace-review-trigger");
+      const status = document.querySelector("[data-demo-status]");
+
+      if (dialog?.tagName.toLowerCase() === "dialog" && trigger instanceof HTMLButtonElement) {
+        let nextStatus = "";
+
+        dialog.querySelectorAll("[data-demo-outcome]").forEach((control) => {
+          control.addEventListener("click", () => {
+            nextStatus = control.getAttribute("data-demo-outcome") ?? "";
+          });
+        });
+
+        const instance = createA11yDialog(dialog);
+
+        trigger.addEventListener("click", () => {
+          instance.open(trigger);
+        });
+
+        dialog.addEventListener("a11y-dialog:close", () => {
+          if (status instanceof HTMLElement) {
+            status.textContent =
+              nextStatus || "Settings review closed. No workspace settings were changed.";
+          }
+
+          nextStatus = "";
+        });
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,916 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Basic A11y Dialog Example | A11y Dialog</title>
+    <meta name="description" content="Try a labelled native dialog with initial focus, Escape close, focus restoration, install code, options, CSS hooks, and limitations.">
+    <link rel="canonical" href="https://vmitsaras.github.io/a11y-dialog/examples/basic/">
+    <meta name="robots" content="index,follow">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="A11y Dialog">
+    <meta property="og:title" content="Basic A11y Dialog Example | A11y Dialog">
+    <meta property="og:description" content="Try a labelled native dialog with initial focus, Escape close, focus restoration, install code, options, CSS hooks, and limitations.">
+    <meta property="og:url" content="https://vmitsaras.github.io/a11y-dialog/examples/basic/">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Basic A11y Dialog Example | A11y Dialog">
+    <meta name="twitter:description" content="Try a labelled native dialog with initial focus, Escape close, focus restoration, install code, options, CSS hooks, and limitations.">
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../../dist/styles.css">
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebPage",
+            "@id": "https://vmitsaras.github.io/a11y-dialog/examples/basic/#webpage",
+            "url": "https://vmitsaras.github.io/a11y-dialog/examples/basic/",
+            "name": "Basic A11y Dialog Example | A11y Dialog",
+            "description": "Try a labelled native dialog with initial focus, Escape close, focus restoration, install code, options, CSS hooks, and limitations.",
+            "inLanguage": "en",
+            "mainEntity": {
+              "@id": "https://vmitsaras.github.io/a11y-dialog/examples/basic/#software"
+            }
+          },
+          {
+            "@type": "SoftwareSourceCode",
+            "@id": "https://vmitsaras.github.io/a11y-dialog/examples/basic/#software",
+            "name": "A11y Dialog",
+            "description": "A framework-agnostic native dialog helper with accessible focus, keyboard, lifecycle, and cleanup behavior.",
+            "codeRepository": "https://github.com/vmitsaras/a11y-dialog",
+            "programmingLanguage": [
+              "TypeScript",
+              "JavaScript"
+            ],
+            "runtimePlatform": "Browser",
+            "version": "0.0.0",
+            "license": "https://github.com/vmitsaras/a11y-dialog/blob/main/LICENSE",
+            "keywords": [
+              "accessibility",
+              "a11y",
+              "dialog",
+              "modal",
+              "focus-management",
+              "typescript"
+            ],
+            "featureList": [
+              "Labelled native dialog example",
+              "Initial focus target",
+              "Focus restoration to opener",
+              "Escape, Tab, and Shift+Tab behavior",
+              "Options and CSS hook reference"
+            ],
+            "author": {
+              "@id": "https://github.com/vmitsaras/#person"
+            },
+            "creator": {
+              "@id": "https://github.com/vmitsaras/#person"
+            },
+            "sameAs": [
+              "https://github.com/vmitsaras/a11y-dialog",
+              "https://www.npmjs.com/package/a11y-dialog"
+            ],
+            "targetProduct": {
+              "@type": "SoftwareApplication",
+              "name": "A11y Dialog",
+              "applicationCategory": "DeveloperApplication",
+              "operatingSystem": "Any",
+              "runtimePlatform": "Browser"
+            }
+          },
+          {
+            "@type": "Person",
+            "@id": "https://github.com/vmitsaras/#person",
+            "name": "Vasileios Mitsaras",
+            "url": "https://github.com/vmitsaras/",
+            "sameAs": [
+              "https://github.com/vmitsaras/",
+              "https://linkedin.com/in/vasilis-mitsaras"
+            ]
+          }
+        ]
+      }
+    </script>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        line-height: 1.5;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        background: #f6f4ef;
+        color: #17211c;
+        margin: 0;
+      }
+
+      a {
+        color: #075e54;
+        font-weight: 700;
+      }
+
+      a:focus-visible,
+      button:focus-visible {
+        outline: 3px solid #0b5fff;
+        outline-offset: 3px;
+      }
+
+      code,
+      kbd {
+        background: #fff8e6;
+        border: 1px solid #d7c99f;
+        border-radius: 0.25rem;
+        color: #3a2b0c;
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+        font-size: 0.95em;
+        padding: 0.1rem 0.25rem;
+      }
+
+      pre {
+        background: #17211c;
+        border-radius: 0.5rem;
+        color: #f7f3e8;
+        margin: 0;
+        overflow-x: auto;
+        padding: 1rem;
+      }
+
+      pre code {
+        background: transparent;
+        border: 0;
+        color: inherit;
+        display: block;
+        min-inline-size: max-content;
+        padding: 0;
+      }
+
+      table {
+        border-collapse: collapse;
+        inline-size: 100%;
+      }
+
+      th,
+      td {
+        border-block-end: 1px solid #d8d0c2;
+        padding: 0.75rem;
+        text-align: start;
+        vertical-align: top;
+      }
+
+      th {
+        background: #ece4d4;
+        color: #26332c;
+      }
+
+      .skip-link {
+        background: #17211c;
+        color: #ffffff;
+        inset-block-start: 0.5rem;
+        inset-inline-start: 0.5rem;
+        padding: 0.75rem 1rem;
+        position: fixed;
+        transform: translateY(-150%);
+        z-index: 2;
+      }
+
+      .skip-link:focus {
+        transform: translateY(0);
+      }
+
+      .demo-page {
+        inline-size: min(72rem, calc(100% - 2rem));
+        margin-inline: auto;
+        overflow-wrap: anywhere;
+        padding-block: 2rem 3rem;
+      }
+
+      .demo-header {
+        display: grid;
+        gap: 1rem;
+        padding-block: 1rem 2rem;
+      }
+
+      .demo-header__eyebrow,
+      .demo-section__eyebrow {
+        color: #8a4b12;
+        font-size: 0.85rem;
+        font-weight: 800;
+        margin: 0;
+        text-transform: uppercase;
+      }
+
+      .demo-header h1 {
+        font-size: 2.5rem;
+        line-height: 1.1;
+        margin: 0;
+        max-inline-size: 14ch;
+      }
+
+      .demo-header__description {
+        font-size: 1.1rem;
+        margin: 0;
+        max-inline-size: 55rem;
+      }
+
+      .demo-header__links,
+      .demo-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+      }
+
+      .demo-button {
+        align-items: center;
+        background: #0f6f5c;
+        border: 1px solid #0f6f5c;
+        border-radius: 0.375rem;
+        color: #ffffff;
+        cursor: pointer;
+        display: inline-flex;
+        font: inherit;
+        font-weight: 800;
+        justify-content: center;
+        min-block-size: 2.75rem;
+        min-inline-size: 0;
+        overflow-wrap: anywhere;
+        padding: 0.65rem 1rem;
+        text-align: center;
+        text-decoration: none;
+      }
+
+      .demo-button--secondary {
+        background: #ffffff;
+        border-color: #7d8f84;
+        color: #17211c;
+      }
+
+      .demo-section {
+        border-block-start: 1px solid #d8d0c2;
+        display: grid;
+        gap: 1rem;
+        padding-block: 2rem;
+      }
+
+      .demo-section__header {
+        display: grid;
+        gap: 0.35rem;
+      }
+
+      .demo-section__header h2,
+      .demo-section h3 {
+        margin: 0;
+      }
+
+      .demo-section__header p,
+      .demo-section > p {
+        margin: 0;
+        max-inline-size: 58rem;
+      }
+
+      .demo-grid {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+      }
+
+      .demo-facts {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+        margin: 0;
+      }
+
+      .demo-facts div,
+      .demo-note,
+      .demo-preview,
+      .demo-code,
+      .demo-table-wrap {
+        background: #ffffff;
+        border: 1px solid #d8d0c2;
+        border-radius: 0.5rem;
+      }
+
+      .demo-facts div,
+      .demo-note,
+      .demo-preview,
+      .demo-code {
+        padding: 1rem;
+      }
+
+      .demo-facts dt {
+        color: #59645d;
+        font-size: 0.85rem;
+        font-weight: 800;
+        margin-block-end: 0.25rem;
+        text-transform: uppercase;
+      }
+
+      .demo-facts dd {
+        margin: 0;
+      }
+
+      .demo-preview {
+        display: grid;
+        gap: 1rem;
+      }
+
+      .demo-preview__summary {
+        display: grid;
+        gap: 0.5rem;
+      }
+
+      .demo-preview__summary h3,
+      .demo-preview__summary p {
+        margin: 0;
+      }
+
+      .demo-status {
+        background: #e7f3ee;
+        border: 1px solid #99c7b8;
+        border-radius: 0.5rem;
+        color: #164536;
+        margin: 0;
+        overflow-wrap: anywhere;
+        padding: 0.75rem 1rem;
+      }
+
+      .demo-code {
+        display: grid;
+        gap: 0.75rem;
+      }
+
+      .demo-code h3 {
+        font-size: 1rem;
+      }
+
+      .demo-table-wrap {
+        overflow-x: auto;
+      }
+
+      .demo-list {
+        margin-block: 0;
+        padding-inline-start: 1.25rem;
+      }
+
+      .demo-list li + li {
+        margin-block-start: 0.5rem;
+      }
+
+      .demo-footer {
+        --demo-footer-background: #122033;
+        --demo-footer-color: #f8fafc;
+        --demo-footer-muted-color: #cad7e5;
+        --demo-footer-link-color: #ffffff;
+        --demo-footer-border-color: rgba(255, 255, 255, 0.16);
+        --demo-footer-focus-color: #facc15;
+        --demo-footer-radius: 0.5rem;
+        --demo-footer-space: clamp(1rem, 2vw, 1.5rem);
+
+        --_background: var(--demo-footer-background);
+        --_color: var(--demo-footer-color);
+        --_muted-color: var(--demo-footer-muted-color);
+        --_link-color: var(--demo-footer-link-color);
+        --_border-color: var(--demo-footer-border-color);
+        --_focus-color: var(--demo-footer-focus-color);
+        --_radius: var(--demo-footer-radius);
+        --_space: var(--demo-footer-space);
+
+        background: var(--_background);
+        border: 1px solid var(--_border-color);
+        border-radius: var(--_radius);
+        color: var(--_color);
+        inline-size: min(72rem, calc(100% - 2rem));
+        margin: clamp(1rem, 4vw, 2.5rem) auto 2rem;
+        padding: var(--_space);
+      }
+
+      .demo-footer__inner {
+        align-items: center;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem 2rem;
+        justify-content: space-between;
+      }
+
+      .demo-footer__brand {
+        display: grid;
+        gap: 0.35rem;
+      }
+
+      .demo-footer__eyebrow,
+      .demo-footer__credit,
+      .demo-footer__meta {
+        margin: 0;
+      }
+
+      .demo-footer__eyebrow,
+      .demo-footer__meta {
+        color: var(--_muted-color);
+        font-size: 0.875rem;
+        line-height: 1.5;
+      }
+
+      .demo-footer__credit {
+        font-size: 1rem;
+        line-height: 1.5;
+      }
+
+      .demo-footer__plugin {
+        font-weight: 700;
+      }
+
+      .demo-footer__links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem 1rem;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .demo-footer__link {
+        color: var(--_link-color);
+        text-decoration-thickness: 0.08em;
+        text-underline-offset: 0.2em;
+      }
+
+      .demo-footer__link:hover {
+        text-decoration-thickness: 0.15em;
+      }
+
+      .demo-footer__link:focus-visible {
+        border-radius: 0.25rem;
+        outline: 3px solid var(--_focus-color);
+        outline-offset: 0.25rem;
+      }
+
+      .demo-footer__brand,
+      .demo-footer__links {
+        min-inline-size: 0;
+      }
+
+      .demo-footer__separator {
+        margin-inline: 0.35rem;
+      }
+
+      #settings-dialog {
+        --a11y-dialog-button-background: #0f6f5c;
+        --a11y-dialog-focus-color: #0b5fff;
+      }
+
+      @media (max-width: 42rem) {
+        .demo-page {
+          inline-size: min(100% - 1rem, 72rem);
+          padding-block-start: 1rem;
+        }
+
+        .demo-header h1 {
+          font-size: 2rem;
+        }
+
+        th,
+        td {
+          padding: 0.65rem;
+        }
+
+        .demo-footer {
+          inline-size: min(100% - 1rem, 72rem);
+        }
+
+        .demo-footer__inner {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .demo-footer__links {
+          flex-direction: column;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+      }
+
+      @media (forced-colors: active) {
+        .demo-button,
+        .demo-button--secondary,
+        .demo-status,
+        .demo-facts div,
+        .demo-note,
+        .demo-preview,
+        .demo-code,
+        .demo-table-wrap,
+        .demo-footer {
+          border: 2px solid CanvasText;
+        }
+
+        a:focus-visible,
+        button:focus-visible,
+        .demo-footer__link:focus-visible {
+          outline-color: Highlight;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to demo content</a>
+
+    <header class="demo-page demo-header">
+      <p class="demo-header__eyebrow">Plugin example</p>
+      <h1>A11y Dialog basic example</h1>
+      <p class="demo-header__description">
+        A compact reference page for the native dialog helper. It shows the
+        minimum markup contract, the package import, keyboard behavior, and the
+        accessibility limits to verify in your own product.
+      </p>
+      <nav class="demo-header__links" aria-label="Demo sections">
+        <a class="demo-button" href="#live-demo">Try the live demo</a>
+        <a class="demo-button demo-button--secondary" href="#usage">Copy usage</a>
+        <a class="demo-button demo-button--secondary" href="#accessibility">Review accessibility notes</a>
+      </nav>
+    </header>
+
+    <main class="demo-page" id="main-content">
+      <section class="demo-section" aria-labelledby="facts-title">
+        <div class="demo-section__header">
+          <p class="demo-section__eyebrow">Overview</p>
+          <h2 id="facts-title">Quick facts</h2>
+        </div>
+        <dl class="demo-facts">
+          <div>
+            <dt>Package</dt>
+            <dd><code>a11y-dialog</code></dd>
+          </div>
+          <div>
+            <dt>Pattern</dt>
+            <dd>Native modal dialog helper</dd>
+          </div>
+          <div>
+            <dt>Runtime</dt>
+            <dd>Framework agnostic TypeScript output</dd>
+          </div>
+          <div>
+            <dt>Best for</dt>
+            <dd>Labelled modal dialogs with predictable focus behavior</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="demo-section" id="live-demo" aria-labelledby="demo-title">
+        <div class="demo-section__header">
+          <p class="demo-section__eyebrow">Live demo</p>
+          <h2 id="demo-title">Review notification settings</h2>
+          <p>
+            Open the dialog, tab through the controls, then close it with Escape
+            or one of the close buttons. Focus should return to the opener.
+          </p>
+        </div>
+
+        <div class="demo-preview">
+          <div class="demo-preview__summary">
+            <h3>Scenario</h3>
+            <p>
+              A team admin reviews notification preferences before confirming
+              them. The dialog has a visible heading, concise description, and
+              close controls that are real buttons.
+            </p>
+          </div>
+          <div class="demo-actions">
+            <button class="demo-button" id="settings-trigger" type="button">
+              Review notification settings
+            </button>
+          </div>
+          <p class="demo-status" data-demo-status role="status">
+            The dialog has not been opened yet.
+          </p>
+        </div>
+
+        <dialog
+          class="a11y-dialog"
+          id="settings-dialog"
+          data-a11y-dialog
+          aria-labelledby="settings-dialog-title"
+          aria-describedby="settings-dialog-description"
+        >
+          <div class="a11y-dialog__surface">
+            <header class="a11y-dialog__header">
+              <h2 class="a11y-dialog__title" id="settings-dialog-title">
+                Review notification settings
+              </h2>
+              <button class="a11y-dialog__button" type="button" data-a11y-dialog-close>
+                Close
+              </button>
+            </header>
+
+            <div class="a11y-dialog__body">
+              <p class="a11y-dialog__description" id="settings-dialog-description">
+                Confirm whether these notification settings still match the way
+                your team wants to receive product updates.
+              </p>
+              <p>
+                Focus moves to the primary confirmation button when the dialog
+                opens. Closing restores focus to the review button.
+              </p>
+            </div>
+
+            <footer class="a11y-dialog__actions">
+              <button class="a11y-dialog__button" type="button" data-a11y-dialog-close>
+                Keep current settings
+              </button>
+              <button
+                class="a11y-dialog__button a11y-dialog__button--primary"
+                type="button"
+                data-a11y-dialog-close
+                data-a11y-dialog-initial-focus
+              >
+                Confirm settings
+              </button>
+            </footer>
+          </div>
+        </dialog>
+      </section>
+
+      <section class="demo-section" aria-labelledby="try-title">
+        <div class="demo-section__header">
+          <p class="demo-section__eyebrow">Manual checks</p>
+          <h2 id="try-title">Try it</h2>
+        </div>
+        <ul class="demo-list">
+          <li>Tab to <strong>Review notification settings</strong> and open it with Enter or Space.</li>
+          <li>Confirm focus moves to <strong>Confirm settings</strong>, the marked initial focus control.</li>
+          <li>Use Tab and Shift+Tab to confirm focus remains inside the open dialog.</li>
+          <li>Press Escape and confirm focus returns to the opener.</li>
+          <li>Open again and close with a button to confirm pointer and keyboard activation both work.</li>
+        </ul>
+      </section>
+
+      <section class="demo-section" id="usage" aria-labelledby="usage-title">
+        <div class="demo-section__header">
+          <p class="demo-section__eyebrow">Developer copy path</p>
+          <h2 id="usage-title">Install and initialize</h2>
+        </div>
+        <div class="demo-grid">
+          <div class="demo-code">
+            <h3>Install</h3>
+            <pre><code>npm install a11y-dialog</code></pre>
+          </div>
+          <div class="demo-code">
+            <h3>JavaScript</h3>
+            <pre><code>import { createA11yDialog } from "a11y-dialog";
+import "a11y-dialog/styles.css";
+
+const dialog = document.querySelector("#settings-dialog");
+const trigger = document.querySelector("#settings-trigger");
+
+if (dialog &amp;&amp; trigger) {
+  const instance = createA11yDialog(dialog);
+
+  trigger.addEventListener("click", () =&gt; {
+    instance.open(trigger);
+  });
+}</code></pre>
+          </div>
+        </div>
+        <div class="demo-code">
+          <h3>Required markup shape</h3>
+          <pre><code>&lt;button id="settings-trigger" type="button"&gt;
+  Review notification settings
+&lt;/button&gt;
+
+&lt;dialog
+  class="a11y-dialog"
+  id="settings-dialog"
+  data-a11y-dialog
+  aria-labelledby="settings-dialog-title"
+  aria-describedby="settings-dialog-description"
+&gt;
+  &lt;div class="a11y-dialog__surface"&gt;
+    &lt;h2 id="settings-dialog-title"&gt;Review notification settings&lt;/h2&gt;
+    &lt;p id="settings-dialog-description"&gt;Confirm the settings before continuing.&lt;/p&gt;
+    &lt;button type="button" data-a11y-dialog-close&gt;Close&lt;/button&gt;
+    &lt;button type="button" data-a11y-dialog-close data-a11y-dialog-initial-focus&gt;
+      Confirm settings
+    &lt;/button&gt;
+  &lt;/div&gt;
+&lt;/dialog&gt;</code></pre>
+        </div>
+      </section>
+
+      <section class="demo-section" aria-labelledby="api-title">
+        <div class="demo-section__header">
+          <p class="demo-section__eyebrow">API</p>
+          <h2 id="api-title">Options and methods shown by this demo</h2>
+        </div>
+        <div class="demo-table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Option or method</th>
+                <th scope="col">Default</th>
+                <th scope="col">Purpose</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>initialFocus</code></td>
+                <td><code>null</code></td>
+                <td>Can point to the first element focused on open. This demo uses <code>data-a11y-dialog-initial-focus</code>.</td>
+              </tr>
+              <tr>
+                <td><code>restoreFocus</code></td>
+                <td><code>true</code></td>
+                <td>Restores focus to the opener when the dialog closes and the opener is still connected.</td>
+              </tr>
+              <tr>
+                <td><code>closeOnEscape</code></td>
+                <td><code>true</code></td>
+                <td>Allows Escape and native cancel behavior to close the dialog.</td>
+              </tr>
+              <tr>
+                <td><code>closeOnBackdrop</code></td>
+                <td><code>false</code></td>
+                <td>Backdrop clicks do not close this basic demo unless the option is enabled.</td>
+              </tr>
+              <tr>
+                <td><code>open(trigger?)</code></td>
+                <td>Method</td>
+                <td>Opens the dialog and stores the opener for focus restoration.</td>
+              </tr>
+              <tr>
+                <td><code>close()</code></td>
+                <td>Method</td>
+                <td>Closes the dialog and runs the focus restoration behavior.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="demo-section" id="accessibility" aria-labelledby="accessibility-title">
+        <div class="demo-section__header">
+          <p class="demo-section__eyebrow">Accessibility behavior</p>
+          <h2 id="accessibility-title">What to verify</h2>
+        </div>
+        <div class="demo-grid">
+          <section class="demo-note" aria-labelledby="keyboard-title">
+            <h3 id="keyboard-title">Keyboard</h3>
+            <ul class="demo-list">
+              <li><kbd>Enter</kbd> and <kbd>Space</kbd> use native button activation.</li>
+              <li><kbd>Tab</kbd> and <kbd>Shift+Tab</kbd> stay inside the open modal dialog.</li>
+              <li><kbd>Escape</kbd> closes the dialog when <code>closeOnEscape</code> is true.</li>
+            </ul>
+          </section>
+          <section class="demo-note" aria-labelledby="screen-reader-title">
+            <h3 id="screen-reader-title">Screen reader notes</h3>
+            <ul class="demo-list">
+              <li>The dialog name comes from the visible heading referenced by <code>aria-labelledby</code>.</li>
+              <li>The description is connected with <code>aria-describedby</code>.</li>
+              <li>Manual testing is still needed in the browser and assistive technology combinations you support.</li>
+            </ul>
+          </section>
+          <section class="demo-note" aria-labelledby="focus-title">
+            <h3 id="focus-title">Focus</h3>
+            <ul class="demo-list">
+              <li>The marked initial focus button receives focus on open.</li>
+              <li>Focus returns to the opener after close when restoration is enabled.</li>
+              <li>The package includes a Tab containment fallback around native modal behavior.</li>
+            </ul>
+          </section>
+        </div>
+      </section>
+
+      <section class="demo-section" aria-labelledby="styling-title">
+        <div class="demo-section__header">
+          <p class="demo-section__eyebrow">Styling hooks</p>
+          <h2 id="styling-title">CSS classes and custom properties</h2>
+        </div>
+        <p>
+          Import <code>a11y-dialog/styles.css</code> or <code>../../dist/styles.css</code>
+          in these static examples to use the baseline layout, focus, backdrop,
+          forced-colors, and reduced-motion styles.
+        </p>
+        <div class="demo-table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Hook</th>
+                <th scope="col">Purpose</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>.a11y-dialog</code></td>
+                <td>Dialog root class for the optional baseline CSS.</td>
+              </tr>
+              <tr>
+                <td><code>.a11y-dialog__surface</code></td>
+                <td>Inner layout wrapper used by the provided styles.</td>
+              </tr>
+              <tr>
+                <td><code>.a11y-dialog__button</code></td>
+                <td>Baseline button treatment with visible focus styles.</td>
+              </tr>
+              <tr>
+                <td><code>--a11y-dialog-focus-color</code></td>
+                <td>Customizes the focus outline color used by the package CSS.</td>
+              </tr>
+              <tr>
+                <td><code>--a11y-dialog-backdrop-color</code></td>
+                <td>Customizes the native backdrop color.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="demo-section" aria-labelledby="limitations-title">
+        <div class="demo-section__header">
+          <p class="demo-section__eyebrow">Limits</p>
+          <h2 id="limitations-title">What this package does not do</h2>
+        </div>
+        <ul class="demo-list">
+          <li>It does not polyfill native <code>&lt;dialog&gt;</code> for unsupported browsers.</li>
+          <li>It does not validate form fields or create error summaries.</li>
+          <li>It does not claim complete WCAG compliance for every integration.</li>
+          <li>Nested modal dialogs are outside the v1 support contract.</li>
+        </ul>
+      </section>
+    </main>
+
+    <footer class="demo-footer" data-demo-footer>
+      <div class="demo-footer__inner">
+        <div class="demo-footer__brand">
+          <p class="demo-footer__eyebrow">Accessibility plugin demo</p>
+
+          <p class="demo-footer__credit">
+            <span class="demo-footer__plugin">A11y Dialog</span>
+            <span class="demo-footer__separator" aria-hidden="true">&middot;</span>
+            Built by
+            <a class="demo-footer__link" href="https://github.com/vmitsaras">Vasileios Mitsaras</a>
+            <span class="demo-footer__separator" aria-hidden="true">&middot;</span>
+            <a class="demo-footer__link" href="https://linkedin.com/in/vasilis-mitsaras">LinkedIn profile</a>
+          </p>
+
+          <p class="demo-footer__meta">
+            <span>a11y-dialog</span>
+            <span class="demo-footer__separator" aria-hidden="true">&middot;</span>
+            <span>MIT License</span>
+          </p>
+        </div>
+
+        <nav class="demo-footer__nav" aria-label="Project links">
+          <ul class="demo-footer__links">
+            <li class="demo-footer__item">
+              <a class="demo-footer__link" href="https://github.com/vmitsaras/a11y-dialog">GitHub repository</a>
+            </li>
+            <li class="demo-footer__item">
+              <a class="demo-footer__link" href="https://www.npmjs.com/package/a11y-dialog">npm package</a>
+            </li>
+            <li class="demo-footer__item">
+              <a class="demo-footer__link" href="https://github.com/vmitsaras/a11y-dialog#readme">Documentation</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <script type="module">
+      import { createA11yDialog } from "../../dist/index.js";
+
+      const dialog = document.querySelector("#settings-dialog");
+      const trigger = document.querySelector("#settings-trigger");
+      const status = document.querySelector("[data-demo-status]");
+
+      if (dialog?.tagName.toLowerCase() === "dialog" && trigger instanceof HTMLButtonElement) {
+        const instance = createA11yDialog(dialog);
+
+        trigger.addEventListener("click", () => {
+          instance.open(trigger);
+        });
+
+        dialog.addEventListener("a11y-dialog:open", () => {
+          if (status instanceof HTMLElement) {
+            status.textContent = "Dialog opened. Focus is inside the modal dialog.";
+          }
+        });
+
+        dialog.addEventListener("a11y-dialog:close", () => {
+          if (status instanceof HTMLElement) {
+            status.textContent = "Dialog closed. Focus should be back on Review notification settings.";
+          }
+        });
+      }
+    </script>
+  </body>
+</html>
