@@ -94,6 +94,10 @@ describe("A11y Dialog outcome addon", () => {
           message: detail.message,
           reason: detail.reason
         });
+        expect(event.target).toBe(dialog);
+        expect(event.bubbles).toBe(true);
+        expect(event.composed).toBe(false);
+        expect(event.cancelable).toBe(false);
       },
       { once: true }
     );
@@ -255,6 +259,18 @@ describe("A11y Dialog outcome addon", () => {
 
     expect(second).not.toBe(first);
     expect(status.textContent).toBe("Settings saved again.");
+  });
+
+  it("automatically destroys with the core and can be reinitialized", () => {
+    const { dialog, status } = createMarkup();
+    const first = createA11yDialogOutcome(dialog, { statusTarget: status });
+    const dialogInstance = createA11yDialog(dialog);
+
+    dialogInstance.destroy();
+
+    expect(() => first.setOutcome("saved")).toThrow(/destroyed/);
+    const second = createA11yDialogOutcome(dialog, { statusTarget: status });
+    expect(second).not.toBe(first);
   });
 
   it("throws when no status target is provided or declared", () => {

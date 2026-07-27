@@ -1,0 +1,611 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dialog Outcome Status Example | A11y Dialog</title>
+    <meta
+      name="description"
+      content="See how a dialog reports saved, canceled, dismissed, and programmatic outcomes through an author-owned status region after focus returns."
+    >
+    <link rel="canonical" href="https://vmitsaras.github.io/a11y-dialog/examples/outcome-status/">
+    <meta name="robots" content="index,follow">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="A11y Dialog">
+    <meta property="og:title" content="Dialog Outcome Status Example | A11y Dialog">
+    <meta
+      property="og:description"
+      content="See how a dialog reports saved, canceled, dismissed, and programmatic outcomes through an author-owned status region after focus returns."
+    >
+    <meta property="og:url" content="https://vmitsaras.github.io/a11y-dialog/examples/outcome-status/">
+    <meta property="og:image" content="https://vmitsaras.github.io/a11y-dialog/social-preview.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1280">
+    <meta property="og:image:height" content="640">
+    <meta property="og:image:alt" content="A11y Dialog — accessible native dialogs with predictable focus and lifecycle behavior.">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://vmitsaras.github.io/a11y-dialog/social-preview.png">
+    <meta name="twitter:image:alt" content="A11y Dialog — accessible native dialogs with predictable focus and lifecycle behavior.">
+    <meta name="twitter:title" content="Dialog Outcome Status Example | A11y Dialog">
+    <meta
+      name="twitter:description"
+      content="See how a dialog reports saved, canceled, dismissed, and programmatic outcomes through an author-owned status region after focus returns."
+    >
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../../dist/styles.css">
+    <link rel="stylesheet" href="../../site-header.css">
+    <link rel="stylesheet" href="./styles.css">
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebPage",
+            "@id": "https://vmitsaras.github.io/a11y-dialog/examples/outcome-status/#webpage",
+            "url": "https://vmitsaras.github.io/a11y-dialog/examples/outcome-status/",
+            "name": "Dialog Outcome Status Example | A11y Dialog",
+            "description": "See how a dialog reports saved, canceled, dismissed, and programmatic outcomes through an author-owned status region after focus returns.",
+            "inLanguage": "en",
+            "primaryImageOfPage": {
+              "@id": "https://vmitsaras.github.io/a11y-dialog/social-preview.png#image"
+            },
+            "mainEntity": {
+              "@id": "https://vmitsaras.github.io/a11y-dialog/examples/outcome-status/#software"
+            }
+          },
+          {
+            "@type": "SoftwareSourceCode",
+            "@id": "https://vmitsaras.github.io/a11y-dialog/examples/outcome-status/#software",
+            "name": "A11y Dialog",
+            "description": "A framework-agnostic native dialog helper with accessible focus, keyboard, lifecycle, and cleanup behavior.",
+            "codeRepository": "https://github.com/vmitsaras/a11y-dialog",
+            "image": {
+              "@id": "https://vmitsaras.github.io/a11y-dialog/social-preview.png#image"
+            },
+            "programmingLanguage": [
+              "TypeScript",
+              "JavaScript"
+            ],
+            "runtimePlatform": "Browser",
+            "version": "0.0.0",
+            "license": "https://github.com/vmitsaras/a11y-dialog/blob/main/LICENSE",
+            "keywords": [
+              "accessibility",
+              "a11y",
+              "dialog",
+              "modal",
+              "status messages",
+              "typescript"
+            ],
+            "featureList": [
+              "Author-owned dialog outcome status region",
+              "Mapped save and cancel outcome messages",
+              "Default dismissal message",
+              "Programmatic outcome before close",
+              "Focus restoration to the dialog opener"
+            ],
+            "author": {
+              "@id": "https://github.com/vmitsaras/#person"
+            },
+            "creator": {
+              "@id": "https://github.com/vmitsaras/#person"
+            },
+            "sameAs": [
+              "https://github.com/vmitsaras/a11y-dialog"
+            ],
+            "targetProduct": {
+              "@type": "SoftwareApplication",
+              "name": "A11y Dialog",
+              "applicationCategory": "DeveloperApplication",
+              "operatingSystem": "Any",
+              "runtimePlatform": "Browser"
+            }
+          },
+          {
+            "@type": "ImageObject",
+            "@id": "https://vmitsaras.github.io/a11y-dialog/social-preview.png#image",
+            "url": "https://vmitsaras.github.io/a11y-dialog/social-preview.png",
+            "contentUrl": "https://vmitsaras.github.io/a11y-dialog/social-preview.png",
+            "encodingFormat": "image/png",
+            "width": 1280,
+            "height": 640,
+            "caption": "A11y Dialog — accessible native dialogs with predictable focus and lifecycle behavior."
+          },
+          {
+            "@type": "Person",
+            "@id": "https://github.com/vmitsaras/#person",
+            "name": "Vasileios Mitsaras",
+            "url": "https://github.com/vmitsaras/",
+            "sameAs": [
+              "https://github.com/vmitsaras/",
+              "https://linkedin.com/in/vasilis-mitsaras"
+            ]
+          }
+        ]
+      }
+    </script>
+    <link rel="stylesheet" href="../../demo-theme.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to demo content</a>
+
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="site-header__logo" href="../../" aria-label="A11y Dialog home">
+          <span class="site-header__logo-mark">A11y</span>
+          <span>Dialog</span>
+        </a>
+        <nav class="site-header__nav" aria-label="Main navigation">
+          <ul class="site-header__nav-list">
+            <li><a href="../../">Overview</a></li>
+            <li><a href="../../#examples">Examples</a></li>
+            <li><a href="https://github.com/vmitsaras/a11y-dialog">GitHub</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main class="demo-page" id="main-content">
+      <header class="demo-hero">
+        <p class="demo-eyebrow">Optional addon example</p>
+        <h1>Report what happened after a dialog closes</h1>
+        <p class="demo-hero__lede demo-hero__description">
+          An editor reviews a release note, then publishes it, keeps a draft,
+          cancels, or dismisses the dialog. The outcome addon reports that
+          decision in one visible status region after focus returns.
+        </p>
+        <div class="demo-hero__actions demo-hero__links">
+          <a class="demo-button" href="#live-demo">Try the outcome flow</a>
+          <a class="demo-button demo-button--secondary" href="#usage">Copy the setup</a>
+        </div>
+      </header>
+
+      <section class="demo-section" aria-labelledby="facts-title">
+        <div class="demo-section__header">
+          <p class="demo-eyebrow">Quick facts</p>
+          <h2 id="facts-title">One close event, one useful result</h2>
+        </div>
+        <dl class="demo-facts">
+          <div>
+            <dt>Import</dt>
+            <dd><code>@vmitsaras/a11y-dialog/outcome</code></dd>
+          </div>
+          <div>
+            <dt>Status markup</dt>
+            <dd>Author-owned and visible</dd>
+          </div>
+          <div>
+            <dt>Generated DOM</dt>
+            <dd>None</dd>
+          </div>
+          <div>
+            <dt>Runtime dependencies</dt>
+            <dd>None</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="demo-section" id="live-demo" aria-labelledby="live-demo-title">
+        <div class="demo-section__header">
+          <p class="demo-eyebrow">Live demo</p>
+          <h2 id="live-demo-title">Review a release note</h2>
+          <p>
+            Open the dialog, then choose Publish, Keep as draft, Cancel, the
+            header Close button, or <kbd>Escape</kbd>. Focus returns to the
+            opener, and the region beneath it reports the result.
+          </p>
+        </div>
+
+        <div class="demo-workspace">
+          <article class="demo-document" aria-labelledby="document-title">
+            <div class="demo-document__meta">
+              <span>Release 2.4</span>
+              <span>4 min read</span>
+              <span>Draft</span>
+            </div>
+            <h3 id="document-title">Keyboard-safe review workflows</h3>
+            <p>
+              A practical note about keeping native dialog semantics, focus
+              restoration, and application-owned status messages aligned.
+            </p>
+            <button class="demo-button" id="release-review-trigger" type="button">
+              Review publication
+            </button>
+          </article>
+
+          <aside class="demo-outcome-panel" aria-labelledby="outcome-panel-title">
+            <p class="demo-eyebrow">Latest outcome</p>
+            <h3 id="outcome-panel-title">What happened?</h3>
+            <p class="demo-status" id="release-review-status" role="status">
+              No publication decision has been recorded in this demo.
+            </p>
+            <p class="demo-outcome-panel__hint">
+              This region stays outside the dialog, so it remains available
+              after the modal closes.
+            </p>
+          </aside>
+        </div>
+
+        <dialog
+          class="a11y-dialog"
+          id="release-review-dialog"
+          data-a11y-dialog
+          data-a11y-dialog-status-target="#release-review-status"
+          aria-labelledby="release-review-title"
+          aria-describedby="release-review-description"
+        >
+          <div class="a11y-dialog__surface">
+            <header class="a11y-dialog__header">
+              <div>
+                <p class="demo-dialog__eyebrow">Publication review</p>
+                <h2 class="a11y-dialog__title" id="release-review-title">
+                  Publish release 2.4 notes?
+                </h2>
+              </div>
+              <button
+                class="a11y-dialog__button"
+                type="button"
+                data-a11y-dialog-close
+                aria-label="Close publication review"
+              >
+                Close
+              </button>
+            </header>
+
+            <div class="a11y-dialog__body">
+              <p class="a11y-dialog__description" id="release-review-description">
+                Choose an outcome for this local demonstration. No content is
+                published, stored, or sent over a network.
+              </p>
+              <dl class="demo-review-list">
+                <div>
+                  <dt>Title</dt>
+                  <dd>Keyboard-safe review workflows</dd>
+                </div>
+                <div>
+                  <dt>Audience</dt>
+                  <dd>Frontend and accessibility teams</dd>
+                </div>
+                <div>
+                  <dt>Checks</dt>
+                  <dd>Heading, links, code examples, and status wording reviewed</dd>
+                </div>
+              </dl>
+            </div>
+
+            <footer class="a11y-dialog__actions demo-dialog__actions">
+              <button
+                class="a11y-dialog__button"
+                type="button"
+                data-a11y-dialog-close
+                data-a11y-dialog-outcome="cancel"
+              >
+                Cancel
+              </button>
+              <button
+                class="a11y-dialog__button"
+                id="keep-draft-button"
+                type="button"
+              >
+                Keep as draft
+              </button>
+              <button
+                class="a11y-dialog__button a11y-dialog__button--primary"
+                type="button"
+                data-a11y-dialog-close
+                data-a11y-dialog-initial-focus
+                data-a11y-dialog-outcome="publish"
+              >
+                Publish notes
+              </button>
+            </footer>
+          </div>
+        </dialog>
+      </section>
+
+      <section class="demo-section" aria-labelledby="try-title">
+        <div class="demo-section__header">
+          <p class="demo-eyebrow">Try it</p>
+          <h2 id="try-title">Check each close route</h2>
+        </div>
+        <ol class="demo-steps">
+          <li>Open the review and choose <strong>Publish notes</strong> for a mapped outcome.</li>
+          <li>Reopen it and choose <strong>Cancel</strong> for a different mapped message.</li>
+          <li>Use <strong>Keep as draft</strong> to exercise <code>setOutcome()</code> before programmatic close.</li>
+          <li>Close with <kbd>Escape</kbd> or the header button to receive the default dismissal message.</li>
+          <li>Repeat with a screen reader and confirm the status is announced once after focus returns.</li>
+        </ol>
+      </section>
+
+      <section class="demo-section" id="usage" aria-labelledby="usage-title">
+        <div class="demo-section__header">
+          <p class="demo-eyebrow">Developer copy path</p>
+          <h2 id="usage-title">Install and initialize</h2>
+          <p>
+            Import core dialog behavior and the optional addon separately. The
+            addon does not auto-initialize or create a hidden live region.
+          </p>
+        </div>
+
+        <div class="demo-code-grid">
+          <div class="demo-code">
+            <h3>Install</h3>
+            <pre><code>npm install @vmitsaras/a11y-dialog</code></pre>
+          </div>
+          <div class="demo-code">
+            <h3>HTML</h3>
+            <pre><code>&lt;p id="review-status" role="status"&gt;&lt;/p&gt;
+
+&lt;dialog
+  data-a11y-dialog
+  data-a11y-dialog-status-target="#review-status"
+  aria-labelledby="review-title"
+&gt;
+  &lt;h2 id="review-title"&gt;Review changes&lt;/h2&gt;
+  &lt;button
+    type="button"
+    data-a11y-dialog-close
+    data-a11y-dialog-outcome="save"
+  &gt;
+    Save
+  &lt;/button&gt;
+  &lt;button type="button" data-a11y-dialog-close&gt;
+    Close
+  &lt;/button&gt;
+&lt;/dialog&gt;</code></pre>
+          </div>
+          <div class="demo-code">
+            <h3>JavaScript</h3>
+            <pre><code>import { createA11yDialog } from "@vmitsaras/a11y-dialog";
+import { createA11yDialogOutcome } from "@vmitsaras/a11y-dialog/outcome";
+
+const instance = createA11yDialog(dialog);
+const outcome = createA11yDialogOutcome(dialog, {
+  statusTarget: "#review-status",
+  messages: {
+    save: "Changes saved.",
+    cancel: "No changes were made."
+  },
+  defaultMessage: "Review closed without saving."
+});
+
+trigger.addEventListener("click", () =&gt; {
+  instance.open(trigger);
+});
+
+saveDraftButton.addEventListener("click", () =&gt; {
+  outcome.setOutcome("draft", "Draft kept for later.");
+  instance.close();
+});</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <section class="demo-section" aria-labelledby="api-title">
+        <div class="demo-section__header">
+          <p class="demo-eyebrow">Addon API</p>
+          <h2 id="api-title">Configure messages without changing dialog behavior</h2>
+          <p>
+            Outcome keys describe application results. They do not replace the
+            core dialog lifecycle or add keyboard interaction.
+          </p>
+        </div>
+
+        <div
+          class="demo-table-wrap"
+          tabindex="0"
+          role="region"
+          aria-label="Outcome addon options"
+        >
+          <table class="demo-table">
+            <thead>
+              <tr>
+                <th scope="col">Option</th>
+                <th scope="col">Default</th>
+                <th scope="col">Purpose</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>statusTarget</code></td>
+                <td><code>null</code></td>
+                <td>Existing element or selector that receives outcome text.</td>
+              </tr>
+              <tr>
+                <td><code>messages</code></td>
+                <td><code>{}</code></td>
+                <td>Maps short outcome keys to strings or message functions.</td>
+              </tr>
+              <tr>
+                <td><code>defaultMessage</code></td>
+                <td><code>"Dialog closed."</code></td>
+                <td>Reports a close without a captured outcome; use <code>null</code> to leave text unchanged.</td>
+              </tr>
+              <tr>
+                <td><code>openMessage</code></td>
+                <td><code>null</code></td>
+                <td>Optionally updates the same target when the dialog opens.</td>
+              </tr>
+              <tr>
+                <td><code>clearOnOpen</code></td>
+                <td><code>false</code></td>
+                <td>Clears the target on open when no open message is configured.</td>
+              </tr>
+              <tr>
+                <td><code>outcomeAttribute</code></td>
+                <td><code>data-a11y-dialog-outcome</code></td>
+                <td>Customizes the attribute read from close controls.</td>
+              </tr>
+              <tr>
+                <td><code>statusTargetAttribute</code></td>
+                <td><code>data-a11y-dialog-status-target</code></td>
+                <td>Customizes the dialog attribute that identifies the target.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="demo-api-grid">
+          <article class="demo-note">
+            <h3>Methods</h3>
+            <dl class="demo-definition-list">
+              <div>
+                <dt><code>setOutcome(key, message?)</code></dt>
+                <dd>Sets the next result before application code closes the dialog.</dd>
+              </div>
+              <div>
+                <dt><code>clearOutcome()</code></dt>
+                <dd>Removes a pending result without changing the current status text.</dd>
+              </div>
+              <div>
+                <dt><code>destroy()</code></dt>
+                <dd>Removes addon listeners and permits clean reinitialization.</dd>
+              </div>
+            </dl>
+          </article>
+          <article class="demo-note">
+            <h3>Lifecycle event</h3>
+            <p>
+              <code>a11y-dialog-outcome:update</code> bubbles from the dialog
+              after an update. Its detail includes the outcome key, resolved
+              message, source element, reason, target, dialog, and instance.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="demo-section" aria-labelledby="keyboard-title">
+        <div class="demo-section__header">
+          <p class="demo-eyebrow">Keyboard interaction</p>
+          <h2 id="keyboard-title">Core dialog keys stay unchanged</h2>
+        </div>
+        <div class="demo-table-wrap">
+          <table class="demo-table">
+            <thead>
+              <tr>
+                <th scope="col">Key</th>
+                <th scope="col">Behavior</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><kbd>Tab</kbd></td>
+                <td>Moves forward through controls inside the open modal dialog.</td>
+              </tr>
+              <tr>
+                <td><kbd>Shift</kbd> + <kbd>Tab</kbd></td>
+                <td>Moves backward through dialog controls.</td>
+              </tr>
+              <tr>
+                <td><kbd>Enter</kbd> or <kbd>Space</kbd></td>
+                <td>Activates the focused native button and its configured outcome.</td>
+              </tr>
+              <tr>
+                <td><kbd>Escape</kbd></td>
+                <td>Closes when enabled and uses the default outcome message.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="demo-section" aria-labelledby="accessibility-title">
+        <div class="demo-section__header">
+          <p class="demo-eyebrow">Accessibility behavior</p>
+          <h2 id="accessibility-title">Keep semantics and announcement ownership explicit</h2>
+        </div>
+        <div class="demo-api-grid">
+          <article class="demo-note">
+            <h3>What this example does</h3>
+            <ul class="demo-list">
+              <li>Uses a labelled native <code>&lt;dialog&gt;</code> and real buttons.</li>
+              <li>Places the status region outside the dialog so it remains exposed after close.</li>
+              <li>Restores focus before the outcome addon updates the status message.</li>
+              <li>Uses concise messages that identify saved, canceled, drafted, or dismissed results.</li>
+              <li>Preserves visible focus and forced-colors support from the package and demo CSS.</li>
+            </ul>
+          </article>
+          <article class="demo-note">
+            <h3>What authors still own</h3>
+            <ul class="demo-list">
+              <li>Choose whether the target should be live; the addon does not add <code>role</code> or <code>aria-live</code>.</li>
+              <li>Keep messages contextual without exposing sensitive application data.</li>
+              <li>Avoid an opening announcement that competes with the dialog name and description.</li>
+              <li>Test target browser and assistive technology combinations manually.</li>
+              <li>Use the async-action addon for pending, retry, and in-dialog failure states.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="demo-section" aria-labelledby="limitations-title">
+        <div class="demo-section__header">
+          <p class="demo-eyebrow">Limitations</p>
+          <h2 id="limitations-title">This addon reports outcomes; it does not create them</h2>
+        </div>
+        <ul class="demo-list demo-list--columns">
+          <li>No form submission, persistence, validation, analytics, or network work is performed.</li>
+          <li>No live region is generated, and no ARIA role is added automatically.</li>
+          <li>Literal attribute messages work, but mapped keys are easier to localize and maintain.</li>
+          <li>A target inside a closed dialog may no longer be exposed to assistive technology.</li>
+          <li>Native <code>&lt;dialog&gt;</code> support and screen reader announcements vary by browser and platform.</li>
+          <li>The package does not claim complete WCAG conformance.</li>
+        </ul>
+      </section>
+    </main>
+
+    <footer class="demo-footer">
+      <div class="demo-footer__inner">
+        <p>
+          A11y Dialog is an MIT-licensed project by Vasileios Mitsaras.
+        </p>
+        <nav aria-label="Project links">
+          <ul class="demo-footer__links">
+            <li><a href="https://github.com/vmitsaras/a11y-dialog">GitHub repository</a></li>
+            <li><a href="https://www.npmjs.com/package/@vmitsaras/a11y-dialog">npm package</a></li>
+            <li><a href="../../#examples">All examples</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <script type="module">
+      import { createA11yDialog } from "../../dist/index.js";
+      import { createA11yDialogOutcome } from "../../dist/outcome.js";
+
+      const dialog = document.querySelector("#release-review-dialog");
+      const trigger = document.querySelector("#release-review-trigger");
+      const draftButton = document.querySelector("#keep-draft-button");
+      const status = document.querySelector("#release-review-status");
+
+      if (
+        dialog instanceof HTMLDialogElement &&
+        trigger instanceof HTMLButtonElement &&
+        draftButton instanceof HTMLButtonElement &&
+        status instanceof HTMLElement
+      ) {
+        const instance = createA11yDialog(dialog);
+        const outcome = createA11yDialogOutcome(dialog, {
+          statusTarget: status,
+          messages: {
+            publish: "Release 2.4 notes published in this demo. Focus returned to Review publication.",
+            cancel: "Publication review canceled. The release notes remain a draft."
+          },
+          defaultMessage: "Publication review dismissed. The release notes remain a draft."
+        });
+
+        trigger.addEventListener("click", () => {
+          instance.open(trigger);
+        });
+
+        draftButton.addEventListener("click", () => {
+          outcome.setOutcome(
+            "draft",
+            "Release 2.4 notes kept as a draft. Focus returned to Review publication."
+          );
+          instance.close();
+        });
+      }
+    </script>
+  </body>
+</html>

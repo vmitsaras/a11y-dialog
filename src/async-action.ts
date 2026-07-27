@@ -1,7 +1,18 @@
-import { A11Y_DIALOG_EVENTS } from "./index";
+import { A11Y_DIALOG_EVENTS, type A11yDialogInstance } from "./index";
+import { getRegisteredDialogInstance } from "./instance-registry";
 
-export type A11yDialogAsyncActionState = "idle" | "pending" | "success" | "error";
-export type A11yDialogAsyncActionRunStatus = "success" | "error" | "skipped";
+export type A11yDialogAsyncActionState =
+  | "idle"
+  | "pending"
+  | "success"
+  | "error"
+  | "canceled";
+export type A11yDialogAsyncActionRunStatus =
+  | "success"
+  | "error"
+  | "canceled"
+  | "skipped";
+export type A11yDialogAsyncActionPendingClose = "abort" | "continue";
 
 export interface A11yDialogAsyncActionContext {
   dialog: HTMLDialogElement;
@@ -73,6 +84,14 @@ export interface A11yDialogAsyncActionOptions {
   errorMessage?: A11yDialogAsyncActionMessage | null;
 
   /**
+   * Message used when pending work is canceled. It is silent by default so a
+   * dialog outcome addon can own the close announcement without duplication.
+   *
+   * @default null
+   */
+  canceledMessage?: A11yDialogAsyncActionMessage | null;
+
+  /**
    * Prevent the native click or submit default before running the action.
    *
    * @default true
@@ -99,6 +118,14 @@ export interface A11yDialogAsyncActionOptions {
    * @default false
    */
   closeOnSuccess?: boolean;
+
+  /**
+   * Abort pending work and suppress its late result when the dialog closes, or
+   * allow it to continue and report its eventual result.
+   *
+   * @default "abort"
+   */
+  pendingClose?: A11yDialogAsyncActionPendingClose;
 
   /**
    * Reset state when the core a11y-dialog open lifecycle event fires.
@@ -151,7 +178,7 @@ export type A11yDialogAsyncActionInitOptions = Omit<
 
 export interface A11yDialogAsyncActionEventDetail
   extends A11yDialogAsyncActionContext {
-  instance: A11yDialogAsyncAction;
+  instance: A11yDialogAsyncActionInstance;
 }
 
 export interface A11yDialogAsyncActionInstance {
@@ -160,6 +187,7 @@ export interface A11yDialogAsyncActionInstance {
   readonly statusTarget: HTMLElement | null;
   readonly state: A11yDialogAsyncActionState;
   run(event?: Event | null): Promise<A11yDialogAsyncActionRunResult>;
+  cancel(): void;
   reset(options?: { clearStatus?: boolean }): void;
   destroy(): void;
 }
@@ -181,10 +209,12 @@ interface NormalizedA11yDialogAsyncActionOptions {
   pendingMessage: A11yDialogAsyncActionMessage | null;
   successMessage: A11yDialogAsyncActionMessage | null;
   errorMessage: A11yDialogAsyncActionMessage | null;
+  canceledMessage: A11yDialogAsyncActionMessage | null;
   preventDefault: boolean;
   ignoreWhilePending: boolean;
   disableTrigger: boolean;
   closeOnSuccess: boolean;
+  pendingClose: A11yDialogAsyncActionPendingClose;
   resetOnOpen: boolean;
   clearStatusOnReset: boolean;
   busyTarget: HTMLElement | null;
@@ -200,6 +230,10 @@ interface StateContextOptions {
   signal?: AbortSignal | null;
 }
 
+interface AsyncActionRunToken {
+  controller: AbortController | null;
+}
+
 export const A11Y_DIALOG_ASYNC_ACTION_ATTRIBUTES = Object.freeze({
   action: "data-a11y-dialog-async-action",
   statusTarget: "data-a11y-dialog-async-status-target",
@@ -211,18 +245,38 @@ export const A11Y_DIALOG_ASYNC_ACTION_EVENTS = Object.freeze({
   pending: "a11y-dialog-async-action:pending",
   success: "a11y-dialog-async-action:success",
   error: "a11y-dialog-async-action:error",
+  canceled: "a11y-dialog-async-action:canceled",
   reset: "a11y-dialog-async-action:reset",
   destroy: "a11y-dialog-async-action:destroy"
 });
+
+export type A11yDialogAsyncActionEventName =
+  (typeof A11Y_DIALOG_ASYNC_ACTION_EVENTS)[keyof typeof A11Y_DIALOG_ASYNC_ACTION_EVENTS];
+
+export interface A11yDialogAsyncActionEventMap {
+  [A11Y_DIALOG_ASYNC_ACTION_EVENTS.change]: A11yDialogAsyncActionEventDetail;
+  [A11Y_DIALOG_ASYNC_ACTION_EVENTS.pending]: A11yDialogAsyncActionEventDetail;
+  [A11Y_DIALOG_ASYNC_ACTION_EVENTS.success]: A11yDialogAsyncActionEventDetail;
+  [A11Y_DIALOG_ASYNC_ACTION_EVENTS.error]: A11yDialogAsyncActionEventDetail;
+  [A11Y_DIALOG_ASYNC_ACTION_EVENTS.canceled]: A11yDialogAsyncActionEventDetail;
+  [A11Y_DIALOG_ASYNC_ACTION_EVENTS.reset]: A11yDialogAsyncActionEventDetail;
+  [A11Y_DIALOG_ASYNC_ACTION_EVENTS.destroy]: A11yDialogAsyncActionEventDetail;
+}
+
+export type A11yDialogAsyncActionLifecycleEvent<
+  Name extends A11yDialogAsyncActionEventName = A11yDialogAsyncActionEventName
+> = CustomEvent<A11yDialogAsyncActionEventMap[Name]>;
 
 export const DEFAULT_A11Y_DIALOG_ASYNC_ACTION_OPTIONS = Object.freeze({
   pendingMessage: "Working...",
   successMessage: "Action complete.",
   errorMessage: "Action failed. Try again.",
+  canceledMessage: null,
   preventDefault: true,
   ignoreWhilePending: true,
   disableTrigger: true,
   closeOnSuccess: false,
+  pendingClose: "abort",
   resetOnOpen: true,
   clearStatusOnReset: false,
   busyTarget: "dialog"
@@ -231,10 +285,12 @@ export const DEFAULT_A11Y_DIALOG_ASYNC_ACTION_OPTIONS = Object.freeze({
   | "pendingMessage"
   | "successMessage"
   | "errorMessage"
+  | "canceledMessage"
   | "preventDefault"
   | "ignoreWhilePending"
   | "disableTrigger"
   | "closeOnSuccess"
+  | "pendingClose"
   | "resetOnOpen"
   | "clearStatusOnReset"
   | "busyTarget"
@@ -389,10 +445,24 @@ function resolveBusyTarget(
 
 function resolveConfiguredMessage(
   options: A11yDialogAsyncActionOptions,
-  key: "pendingMessage" | "successMessage" | "errorMessage",
+  key: "pendingMessage" | "successMessage" | "errorMessage" | "canceledMessage",
   fallback: A11yDialogAsyncActionMessage | null
 ): A11yDialogAsyncActionMessage | null {
   return hasOwnOption(options, key) ? options[key] ?? null : fallback;
+}
+
+function resolvePendingClose(
+  value: A11yDialogAsyncActionPendingClose | undefined
+): A11yDialogAsyncActionPendingClose {
+  const resolved = value ?? DEFAULT_A11Y_DIALOG_ASYNC_ACTION_OPTIONS.pendingClose;
+
+  if (resolved !== "abort" && resolved !== "continue") {
+    throw new TypeError(
+      'A11yDialogAsyncAction pendingClose must be either "abort" or "continue".'
+    );
+  }
+
+  return resolved;
 }
 
 function normalizeOptions(
@@ -437,6 +507,11 @@ function normalizeOptions(
       "errorMessage",
       DEFAULT_A11Y_DIALOG_ASYNC_ACTION_OPTIONS.errorMessage
     ),
+    canceledMessage: resolveConfiguredMessage(
+      options,
+      "canceledMessage",
+      DEFAULT_A11Y_DIALOG_ASYNC_ACTION_OPTIONS.canceledMessage
+    ),
     preventDefault:
       options.preventDefault ?? DEFAULT_A11Y_DIALOG_ASYNC_ACTION_OPTIONS.preventDefault,
     ignoreWhilePending:
@@ -446,6 +521,7 @@ function normalizeOptions(
       options.disableTrigger ?? DEFAULT_A11Y_DIALOG_ASYNC_ACTION_OPTIONS.disableTrigger,
     closeOnSuccess:
       options.closeOnSuccess ?? DEFAULT_A11Y_DIALOG_ASYNC_ACTION_OPTIONS.closeOnSuccess,
+    pendingClose: resolvePendingClose(options.pendingClose),
     resetOnOpen: options.resetOnOpen ?? DEFAULT_A11Y_DIALOG_ASYNC_ACTION_OPTIONS.resetOnOpen,
     clearStatusOnReset:
       options.clearStatusOnReset ??
@@ -506,9 +582,11 @@ export class A11yDialogAsyncAction implements A11yDialogAsyncActionInstance {
   readonly options!: NormalizedA11yDialogAsyncActionOptions;
 
   private currentState: A11yDialogAsyncActionState = "idle";
-  private currentController: AbortController | null = null;
+  private currentRun: AsyncActionRunToken | null = null;
+  private readonly canceledRuns = new WeakSet<AsyncActionRunToken>();
   private readonly disabledTargets = new Map<DisableableElement, boolean>();
   private originalBusy: string | null = null;
+  private lastStatusText: string | null = null;
   private destroyed = false;
 
   private readonly handleActivate = (event: Event) => {
@@ -519,6 +597,16 @@ export class A11yDialogAsyncAction implements A11yDialogAsyncActionInstance {
     if (this.options.resetOnOpen) {
       this.reset({ clearStatus: this.options.clearStatusOnReset });
     }
+  };
+
+  private readonly handleClose = (event: Event) => {
+    if (this.options.pendingClose === "abort") {
+      this.cancelPending(event);
+    }
+  };
+
+  private readonly handleDestroy = () => {
+    this.destroy();
   };
 
   constructor(dialog: HTMLDialogElement, options: A11yDialogAsyncActionOptions) {
@@ -560,7 +648,8 @@ export class A11yDialogAsyncAction implements A11yDialogAsyncActionInstance {
 
     const controller =
       typeof AbortController !== "undefined" ? new AbortController() : null;
-    this.currentController = controller;
+    const runToken = { controller };
+    this.currentRun = runToken;
     this.setPending({ event, signal: controller?.signal ?? null });
 
     try {
@@ -571,46 +660,77 @@ export class A11yDialogAsyncAction implements A11yDialogAsyncActionInstance {
         })
       );
 
-      if (this.currentController !== controller || this.destroyed) {
+      if (this.canceledRuns.has(runToken)) {
+        this.canceledRuns.delete(runToken);
+        return { status: "canceled" };
+      }
+
+      if (this.currentRun !== runToken || this.destroyed) {
         return { status: "skipped" };
       }
 
-      this.currentController = null;
-      this.setSuccess({ event, result });
+      const signal = runToken.controller?.signal ?? null;
+      this.currentRun = null;
+      this.setSuccess({ event, result, signal });
 
       if (this.options.closeOnSuccess) {
-        this.dialog.close();
+        const dialogInstance = getRegisteredDialogInstance<A11yDialogInstance>(this.dialog);
+
+        if (dialogInstance) {
+          dialogInstance.close();
+        } else {
+          this.dialog.close();
+        }
       }
 
       return { status: "success", result };
     } catch (error) {
-      if (this.currentController !== controller || this.destroyed) {
+      if (this.canceledRuns.has(runToken)) {
+        this.canceledRuns.delete(runToken);
+        return { status: "canceled" };
+      }
+
+      if (this.currentRun !== runToken || this.destroyed) {
         return { status: "skipped" };
       }
 
-      this.currentController = null;
-      this.setError({ error, event });
+      const signal = runToken.controller?.signal ?? null;
+      this.currentRun = null;
+      this.setError({ error, event, signal });
       return { status: "error", error };
     }
   }
 
+  cancel(): void {
+    this.assertActive();
+    this.cancelPending(null);
+  }
+
   reset(options: { clearStatus?: boolean } = {}): void {
     this.assertActive();
-    this.currentController?.abort();
-    this.currentController = null;
+    const statusWillChange = Boolean(
+      options.clearStatus && this.statusTarget && this.statusTarget.textContent !== ""
+    );
+    const stateWillChange = this.currentState !== "idle";
+    const hasEffectiveChange = stateWillChange || statusWillChange;
+    this.currentRun?.controller?.abort();
+    this.currentRun = null;
     this.restorePendingAttributes();
     this.applyState("idle");
 
     if (options.clearStatus && this.statusTarget) {
       this.statusTarget.textContent = "";
+      this.lastStatusText = null;
     }
 
     this.dispatchLifecycleEvent(A11Y_DIALOG_ASYNC_ACTION_EVENTS.reset, {
       event: null
     });
-    this.dispatchLifecycleEvent(A11Y_DIALOG_ASYNC_ACTION_EVENTS.change, {
-      event: null
-    });
+    if (hasEffectiveChange) {
+      this.dispatchLifecycleEvent(A11Y_DIALOG_ASYNC_ACTION_EVENTS.change, {
+        event: null
+      });
+    }
   }
 
   destroy(): void {
@@ -618,8 +738,8 @@ export class A11yDialogAsyncAction implements A11yDialogAsyncActionInstance {
       return;
     }
 
-    this.currentController?.abort();
-    this.currentController = null;
+    this.currentRun?.controller?.abort();
+    this.currentRun = null;
     this.unbindEvents();
     this.restorePendingAttributes();
     this.dialog.removeAttribute(this.options.stateAttribute);
@@ -637,6 +757,8 @@ export class A11yDialogAsyncAction implements A11yDialogAsyncActionInstance {
 
     this.trigger.addEventListener(eventName, this.handleActivate);
     this.dialog.addEventListener(A11Y_DIALOG_EVENTS.open, this.handleOpen);
+    this.dialog.addEventListener(A11Y_DIALOG_EVENTS.close, this.handleClose);
+    this.dialog.addEventListener(A11Y_DIALOG_EVENTS.destroy, this.handleDestroy);
   }
 
   private unbindEvents(): void {
@@ -644,6 +766,8 @@ export class A11yDialogAsyncAction implements A11yDialogAsyncActionInstance {
 
     this.trigger.removeEventListener(eventName, this.handleActivate);
     this.dialog.removeEventListener(A11Y_DIALOG_EVENTS.open, this.handleOpen);
+    this.dialog.removeEventListener(A11Y_DIALOG_EVENTS.close, this.handleClose);
+    this.dialog.removeEventListener(A11Y_DIALOG_EVENTS.destroy, this.handleDestroy);
   }
 
   private setPending(options: StateContextOptions): void {
@@ -668,6 +792,32 @@ export class A11yDialogAsyncAction implements A11yDialogAsyncActionInstance {
     this.updateStatus(this.options.errorMessage, options);
     this.dispatchLifecycleEvent(A11Y_DIALOG_ASYNC_ACTION_EVENTS.error, options);
     this.dispatchLifecycleEvent(A11Y_DIALOG_ASYNC_ACTION_EVENTS.change, options);
+  }
+
+  private cancelPending(event: Event | null): void {
+    if (this.currentState !== "pending" || !this.currentRun) {
+      return;
+    }
+
+    const runToken = this.currentRun;
+    const signal = runToken.controller?.signal ?? null;
+    this.canceledRuns.add(runToken);
+    runToken.controller?.abort();
+    this.currentRun = null;
+    this.restorePendingAttributes();
+    this.applyState("canceled");
+
+    const contextOptions = { event, signal };
+    if (this.options.canceledMessage === null) {
+      this.clearOwnedStatus();
+    } else {
+      this.updateStatus(this.options.canceledMessage, contextOptions);
+    }
+    this.dispatchLifecycleEvent(
+      A11Y_DIALOG_ASYNC_ACTION_EVENTS.canceled,
+      contextOptions
+    );
+    this.dispatchLifecycleEvent(A11Y_DIALOG_ASYNC_ACTION_EVENTS.change, contextOptions);
   }
 
   private applyState(state: A11yDialogAsyncActionState): void {
@@ -721,7 +871,17 @@ export class A11yDialogAsyncAction implements A11yDialogAsyncActionInstance {
       return;
     }
 
-    this.statusTarget.textContent = resolveMessage(message, this.createContext(options));
+    const text = resolveMessage(message, this.createContext(options));
+    this.statusTarget.textContent = text;
+    this.lastStatusText = text;
+  }
+
+  private clearOwnedStatus(): void {
+    if (this.statusTarget && this.statusTarget.textContent === this.lastStatusText) {
+      this.statusTarget.textContent = "";
+    }
+
+    this.lastStatusText = null;
   }
 
   private createContext(options: StateContextOptions): A11yDialogAsyncActionContext {
@@ -734,17 +894,19 @@ export class A11yDialogAsyncAction implements A11yDialogAsyncActionInstance {
       event: options.event ?? null,
       result: options.result,
       error: options.error,
-      signal: options.signal ?? this.currentController?.signal ?? null
+      signal: options.signal ?? this.currentRun?.controller?.signal ?? null
     };
   }
 
   private dispatchLifecycleEvent(
-    name: (typeof A11Y_DIALOG_ASYNC_ACTION_EVENTS)[keyof typeof A11Y_DIALOG_ASYNC_ACTION_EVENTS],
+    name: A11yDialogAsyncActionEventName,
     options: StateContextOptions
   ): void {
     this.dialog.dispatchEvent(
-      new CustomEvent<A11yDialogAsyncActionEventDetail>(name, {
+      new CustomEvent<A11yDialogAsyncActionEventMap[typeof name]>(name, {
         bubbles: true,
+        composed: false,
+        cancelable: false,
         detail: {
           ...this.createContext(options),
           instance: this

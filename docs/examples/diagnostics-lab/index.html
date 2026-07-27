@@ -1,0 +1,551 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dialog Markup Diagnostics Lab | A11y Dialog</title>
+    <meta name="description" content="Scan dialog fixtures for duplicate IDs, broken ARIA references, unsafe focus targets, invalid close controls, and nested dialogs before initialization.">
+    <link rel="canonical" href="https://vmitsaras.github.io/a11y-dialog/examples/diagnostics-lab/">
+    <meta name="robots" content="index,follow">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="A11y Dialog">
+    <meta property="og:title" content="Dialog Markup Diagnostics Lab | A11y Dialog">
+    <meta property="og:description" content="Scan dialog fixtures for duplicate IDs, broken ARIA references, unsafe focus targets, invalid close controls, and nested dialogs before initialization.">
+    <meta property="og:url" content="https://vmitsaras.github.io/a11y-dialog/examples/diagnostics-lab/">
+    <meta property="og:image" content="https://vmitsaras.github.io/a11y-dialog/social-preview.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1280">
+    <meta property="og:image:height" content="640">
+    <meta property="og:image:alt" content="A11y Dialog — accessible native dialogs with predictable focus and lifecycle behavior.">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://vmitsaras.github.io/a11y-dialog/social-preview.png">
+    <meta name="twitter:image:alt" content="A11y Dialog — accessible native dialogs with predictable focus and lifecycle behavior.">
+    <meta name="twitter:title" content="Dialog Markup Diagnostics Lab | A11y Dialog">
+    <meta name="twitter:description" content="Scan dialog fixtures for duplicate IDs, broken ARIA references, unsafe focus targets, invalid close controls, and nested dialogs before initialization.">
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../../site-header.css">
+    <link rel="stylesheet" href="./styles.css">
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebPage",
+            "@id": "https://vmitsaras.github.io/a11y-dialog/examples/diagnostics-lab/#webpage",
+            "url": "https://vmitsaras.github.io/a11y-dialog/examples/diagnostics-lab/",
+            "name": "Dialog Markup Diagnostics Lab | A11y Dialog",
+            "description": "Scan dialog fixtures for duplicate IDs, broken ARIA references, unsafe focus targets, invalid close controls, and nested dialogs before initialization.",
+            "inLanguage": "en",
+            "primaryImageOfPage": {
+              "@id": "https://vmitsaras.github.io/a11y-dialog/social-preview.png#image"
+            },
+            "mainEntity": {
+              "@id": "https://vmitsaras.github.io/a11y-dialog/examples/diagnostics-lab/#software"
+            }
+          },
+          {
+            "@type": "SoftwareSourceCode",
+            "@id": "https://vmitsaras.github.io/a11y-dialog/examples/diagnostics-lab/#software",
+            "name": "A11y Dialog",
+            "description": "A framework-agnostic native dialog helper with accessible focus, keyboard, lifecycle, and cleanup behavior.",
+            "codeRepository": "https://github.com/vmitsaras/a11y-dialog",
+            "image": {
+              "@id": "https://vmitsaras.github.io/a11y-dialog/social-preview.png#image"
+            },
+            "programmingLanguage": [
+              "TypeScript",
+              "JavaScript"
+            ],
+            "runtimePlatform": "Browser",
+            "version": "0.0.0",
+            "license": "https://github.com/vmitsaras/a11y-dialog/blob/main/LICENSE",
+            "keywords": [
+              "accessibility",
+              "a11y",
+              "dialog",
+              "diagnostics",
+              "focus-management",
+              "typescript"
+            ],
+            "featureList": [
+              "Read-only dialog markup inspection",
+              "Structured diagnostic errors and warnings",
+              "Duplicate ID and ARIA reference checks",
+              "Initial-focus and close-control checks",
+              "Scoped scanning for development and CI"
+            ],
+            "author": {
+              "@id": "https://github.com/vmitsaras/#person"
+            },
+            "creator": {
+              "@id": "https://github.com/vmitsaras/#person"
+            },
+            "sameAs": [
+              "https://github.com/vmitsaras/a11y-dialog"
+            ],
+            "targetProduct": {
+              "@type": "SoftwareApplication",
+              "name": "A11y Dialog",
+              "applicationCategory": "DeveloperApplication",
+              "operatingSystem": "Any",
+              "runtimePlatform": "Browser"
+            }
+          },
+          {
+            "@type": "ImageObject",
+            "@id": "https://vmitsaras.github.io/a11y-dialog/social-preview.png#image",
+            "url": "https://vmitsaras.github.io/a11y-dialog/social-preview.png",
+            "contentUrl": "https://vmitsaras.github.io/a11y-dialog/social-preview.png",
+            "encodingFormat": "image/png",
+            "width": 1280,
+            "height": 640,
+            "caption": "A11y Dialog — accessible native dialogs with predictable focus and lifecycle behavior."
+          },
+          {
+            "@type": "Person",
+            "@id": "https://github.com/vmitsaras/#person",
+            "name": "Vasileios Mitsaras",
+            "url": "https://github.com/vmitsaras/",
+            "sameAs": [
+              "https://github.com/vmitsaras/",
+              "https://linkedin.com/in/vasilis-mitsaras"
+            ]
+          }
+        ]
+      }
+    </script>
+    <link rel="stylesheet" href="../../demo-theme.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to diagnostics lab</a>
+
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="site-header__logo" href="../../" aria-label="A11y Dialog home">
+          <span class="site-header__logo-mark">A11y</span>
+          <span>Dialog</span>
+        </a>
+        <nav class="site-header__nav" aria-label="Main navigation">
+          <ul class="site-header__nav-list">
+            <li><a href="../../">Overview</a></li>
+            <li><a href="../../#examples">Examples</a></li>
+            <li><a href="https://github.com/vmitsaras/a11y-dialog">GitHub</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main class="demo-page" id="main-content">
+      <header class="demo-hero">
+        <div>
+          <p class="demo-eyebrow">Developer diagnostics example</p>
+          <h1>Inspect dialog markup before initialization</h1>
+          <p class="demo-hero__description">
+            Load a CMS-style dialog fixture, edit its markup, and collect every
+            structured diagnostics issue in one read-only pass. No dialog is
+            initialized, opened, or focused during the scan.
+          </p>
+          <nav class="demo-hero__links" aria-label="Page shortcuts">
+            <a class="demo-button demo-button--primary" href="#lab-title">Try the diagnostics lab</a>
+            <a class="demo-button demo-button--secondary" href="#api-title">Review the CI API</a>
+          </nav>
+        </div>
+      </header>
+
+      <ul class="demo-hero__facts demo-hero-facts" aria-label="Diagnostics characteristics">
+        <li><strong>13</strong> issue codes</li>
+        <li><strong>0</strong> network calls</li>
+        <li><strong>Read-only</strong> DOM inspection</li>
+      </ul>
+
+      <section class="demo-section demo-section--split" aria-labelledby="scenario-title">
+        <div>
+          <p class="demo-eyebrow">Scenario</p>
+          <h2 id="scenario-title">Catch CMS regressions before dialog setup</h2>
+        </div>
+        <div class="demo-prose">
+          <p>
+            A design-system maintainer receives server-rendered dialog markup
+            from several CMS templates. Core initialization would stop at the
+            first essential error, but the team needs one actionable report for
+            the entire fixture before shipping.
+          </p>
+          <p>
+            User goal: scan a bounded fragment, review every error and warning,
+            repair the markup, and rerun the same check in local development or CI.
+          </p>
+        </div>
+      </section>
+
+      <section class="demo-section" aria-labelledby="try-title">
+        <div class="demo-section__header">
+          <p class="demo-eyebrow">Try it</p>
+          <h2 id="try-title">Move from broken markup to a clean fixture</h2>
+        </div>
+        <ol class="demo-steps">
+          <li>Run the preloaded broken fixture and review the aggregated issues.</li>
+          <li>Use Tab to move through the editor, fixture buttons, and results.</li>
+          <li>Edit an ID, label reference, close control, or focus target and scan again.</li>
+          <li>Load the valid fixture and confirm the configured diagnostics return no issues.</li>
+        </ol>
+      </section>
+
+      <section class="demo-section" aria-labelledby="lab-title">
+        <div class="demo-section__header">
+          <p class="demo-eyebrow">Interactive developer lab</p>
+          <h2 id="lab-title">Dialog fixture scanner</h2>
+          <p>
+            The editor content is parsed into a detached
+            <code>DocumentFragment</code>. The diagnostics addon inspects that
+            fragment without placing its intentionally broken markup in this page.
+          </p>
+        </div>
+
+        <div class="demo-lab">
+          <div class="demo-editor">
+            <div class="demo-editor__header">
+              <div>
+                <label for="dialog-fixture">Dialog markup</label>
+                <p id="fixture-hint">Edit the fixture or load one of the presets.</p>
+              </div>
+              <span class="demo-editor__file" aria-hidden="true">fixture.html</span>
+            </div>
+            <textarea
+              id="dialog-fixture"
+              aria-describedby="fixture-hint"
+              autocapitalize="off"
+              autocomplete="off"
+              spellcheck="false"
+            >&lt;dialog
+  id="publish-dialog"
+  data-a11y-dialog
+  data-a11y-dialog-initial-focus="#publish-confirm"
+  aria-labelledby="publish-title missing-title"
+  aria-describedby="missing-description"
+&gt;
+  &lt;h2 id="publish-title" hidden&gt;Publish changes&lt;/h2&gt;
+  &lt;p id="duplicate-note"&gt;Review the release summary.&lt;/p&gt;
+  &lt;p id="duplicate-note"&gt;This ID should be unique.&lt;/p&gt;
+  &lt;a href="#" data-a11y-dialog-close&gt;Close&lt;/a&gt;
+  &lt;button id="publish-confirm" type="button" disabled&gt;
+    Publish changes
+  &lt;/button&gt;
+  &lt;dialog&gt;
+    &lt;p&gt;Nested confirmation&lt;/p&gt;
+  &lt;/dialog&gt;
+&lt;/dialog&gt;</textarea>
+            <div class="demo-actions">
+              <button class="demo-button demo-button--secondary" id="load-broken" type="button">
+                Load broken fixture
+              </button>
+              <button class="demo-button demo-button--secondary" id="load-valid" type="button">
+                Load valid fixture
+              </button>
+              <button class="demo-button demo-button--primary" id="run-diagnostics" type="button">
+                Run diagnostics
+              </button>
+            </div>
+          </div>
+
+          <div class="demo-report" aria-labelledby="report-title">
+            <div class="demo-report__header">
+              <div>
+                <p class="demo-eyebrow">Structured output</p>
+                <h3 id="report-title">Diagnostic results</h3>
+              </div>
+              <span class="demo-state" data-demo-state="ready">Ready to scan</span>
+            </div>
+
+            <dl class="demo-counts" aria-label="Diagnostic counts">
+              <div>
+                <dt>Errors</dt>
+                <dd data-error-count>&mdash;</dd>
+              </div>
+              <div>
+                <dt>Warnings</dt>
+                <dd data-warning-count>&mdash;</dd>
+              </div>
+              <div>
+                <dt>Marked dialogs</dt>
+                <dd data-dialog-count>&mdash;</dd>
+              </div>
+            </dl>
+
+            <p class="demo-status" id="scan-status" role="status" aria-live="polite">
+              Ready. Run diagnostics to inspect the current fixture.
+            </p>
+
+            <ol class="demo-issues" aria-labelledby="report-title" aria-describedby="scan-status" tabindex="0">
+              <li class="demo-empty">No scan has run yet.</li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <section class="demo-section demo-section--split" aria-labelledby="api-title">
+        <div>
+          <p class="demo-eyebrow">Copy path</p>
+          <h2 id="api-title">Use the same bounded scan in CI</h2>
+          <p>
+            Import the development addon separately. Calling it has no automatic
+            side effects and does not initialize the core dialog helper.
+          </p>
+        </div>
+        <pre class="demo-code"><code>import { inspectA11yDialogs } from "@vmitsaras/a11y-dialog/diagnostics";
+
+const issues = inspectA11yDialogs(document);
+const errors = issues.filter((issue) =&gt; issue.severity === "error");
+
+if (errors.length &gt; 0) {
+  throw new Error(`${errors.length} dialog markup errors found.`);
+}</code></pre>
+      </section>
+
+      <section class="demo-section" aria-labelledby="a11y-title">
+        <div class="demo-section__header">
+          <p class="demo-eyebrow">Accessibility notes</p>
+          <h2 id="a11y-title">What this lab preserves and what it cannot prove</h2>
+        </div>
+        <div class="demo-note-grid">
+          <section class="demo-note" aria-labelledby="keyboard-title">
+            <h3 id="keyboard-title">Keyboard and focus</h3>
+            <ul>
+              <li>All lab actions are native buttons and the fixture editor is a labelled textarea.</li>
+              <li>The scan keeps focus on the control the developer activated.</li>
+              <li>The addon never opens, closes, initializes, or focuses a dialog.</li>
+            </ul>
+          </section>
+          <section class="demo-note" aria-labelledby="status-title">
+            <h3 id="status-title">Screen reader and status output</h3>
+            <ul>
+              <li>A polite status message announces scan totals without interrupting current work.</li>
+              <li>Results remain in a semantic ordered list for sequential review.</li>
+              <li>Error and warning labels are written in text and do not rely on color alone.</li>
+            </ul>
+          </section>
+          <section class="demo-note" aria-labelledby="visual-title">
+            <h3 id="visual-title">Motion and display</h3>
+            <ul>
+              <li>The lab has no required animation and respects reduced-motion preferences.</li>
+              <li>Visible focus indicators and forced-colors adjustments support non-default display modes.</li>
+              <li>The two-column workspace collapses into a single reading order on narrow screens.</li>
+            </ul>
+          </section>
+        </div>
+      </section>
+
+      <section class="demo-section demo-section--split" aria-labelledby="developer-title">
+        <div>
+          <p class="demo-eyebrow">Developer notes</p>
+          <h2 id="developer-title">Implementation contract</h2>
+        </div>
+        <ul class="demo-checklist">
+          <li>Import <code>inspectA11yDialogs</code> from <code>../../dist/diagnostics.js</code> in this local example.</li>
+          <li>Pass a <code>Document</code>, <code>DocumentFragment</code>, <code>ShadowRoot</code>, or element scope.</li>
+          <li>Inspect the returned <code>code</code>, <code>severity</code>, <code>dialog</code>, <code>element</code>, and <code>message</code> fields.</li>
+          <li>No package CSS is required for diagnostics; <code>styles.css</code> only presents this developer lab.</li>
+          <li>The addon does not auto-scan, install a <code>MutationObserver</code>, store data, send analytics, or make network calls.</li>
+        </ul>
+      </section>
+
+      <section class="demo-section demo-section--split" aria-labelledby="limitations-title">
+        <div>
+          <p class="demo-eyebrow">Limitations</p>
+          <h2 id="limitations-title">A clean scan is not a compliance result</h2>
+        </div>
+        <div class="demo-prose">
+          <p>
+            Diagnostics cover the package's static markup contract. They cannot
+            evaluate rendered CSS visibility, application-only runtime options,
+            actual keyboard flow, or assistive technology announcements.
+          </p>
+          <p>
+            Continue with browser, keyboard, zoom, forced-colors, and screen
+            reader testing for the combinations your product supports. Do not
+            use a zero-issue result as evidence of complete WCAG conformance.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="demo-footer" data-demo-footer>
+      <div class="demo-footer__inner">
+        <div class="demo-footer__brand">
+          <p class="demo-footer__eyebrow">Accessibility plugin demo</p>
+          <p class="demo-footer__credit">
+            <span class="demo-footer__plugin">A11y Dialog</span>
+            <span class="demo-footer__separator" aria-hidden="true">&middot;</span>
+            Built by
+            <a class="demo-footer__link" href="https://github.com/vmitsaras">Vasileios Mitsaras</a>
+            <span class="demo-footer__separator" aria-hidden="true">&middot;</span>
+            <a class="demo-footer__link" href="https://linkedin.com/in/vasilis-mitsaras">LinkedIn profile</a>
+          </p>
+          <p class="demo-footer__meta">
+            <span>@vmitsaras/a11y-dialog</span>
+            <span class="demo-footer__separator" aria-hidden="true">&middot;</span>
+            <span>MIT License</span>
+          </p>
+        </div>
+        <nav class="demo-footer__nav" aria-label="Project links">
+          <ul class="demo-footer__links">
+            <li class="demo-footer__item"><a class="demo-footer__link" href="https://github.com/vmitsaras/a11y-dialog">GitHub repository</a></li>
+            <li class="demo-footer__item"><a class="demo-footer__link" href="https://www.npmjs.com/package/@vmitsaras/a11y-dialog">npm package</a></li>
+            <li class="demo-footer__item"><a class="demo-footer__link" href="https://github.com/vmitsaras/a11y-dialog#readme">Documentation</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <script type="module">
+      import { inspectA11yDialogs } from "../../dist/diagnostics.js";
+
+      const editor = document.querySelector("#dialog-fixture");
+      const loadBrokenButton = document.querySelector("#load-broken");
+      const loadValidButton = document.querySelector("#load-valid");
+      const runButton = document.querySelector("#run-diagnostics");
+      const status = document.querySelector("#scan-status");
+      const issueList = document.querySelector(".demo-issues");
+      const state = document.querySelector("[data-demo-state]");
+      const errorCount = document.querySelector("[data-error-count]");
+      const warningCount = document.querySelector("[data-warning-count]");
+      const dialogCount = document.querySelector("[data-dialog-count]");
+
+      if (
+        editor instanceof HTMLTextAreaElement &&
+        loadBrokenButton instanceof HTMLButtonElement &&
+        loadValidButton instanceof HTMLButtonElement &&
+        runButton instanceof HTMLButtonElement &&
+        status instanceof HTMLElement &&
+        issueList instanceof HTMLOListElement &&
+        state instanceof HTMLElement &&
+        errorCount instanceof HTMLElement &&
+        warningCount instanceof HTMLElement &&
+        dialogCount instanceof HTMLElement
+      ) {
+        const brokenFixture = editor.value.trim();
+        const validFixture = `<dialog
+  id="publish-dialog"
+  data-a11y-dialog
+  data-a11y-dialog-initial-focus="#publish-confirm"
+  aria-labelledby="publish-title"
+  aria-describedby="publish-description"
+>
+  <h2 id="publish-title">Publish changes</h2>
+  <p id="publish-description">
+    Review the release summary before publishing.
+  </p>
+  <button type="button" data-a11y-dialog-close>Cancel</button>
+  <button
+    id="publish-confirm"
+    type="button"
+    data-a11y-dialog-close
+  >
+    Publish changes
+  </button>
+</dialog>`;
+
+        const setPendingState = (message) => {
+          state.dataset.demoState = "ready";
+          state.textContent = "Ready to scan";
+          errorCount.innerHTML = "&mdash;";
+          warningCount.innerHTML = "&mdash;";
+          dialogCount.innerHTML = "&mdash;";
+          status.textContent = message;
+          issueList.replaceChildren();
+          const item = document.createElement("li");
+          item.className = "demo-empty";
+          item.textContent = "Run diagnostics to refresh this report.";
+          issueList.append(item);
+        };
+
+        const describeElement = (element) => {
+          const tagName = element.tagName.toLowerCase();
+          const id = element.id ? `#${element.id}` : "";
+          const closeMarker = element.hasAttribute("data-a11y-dialog-close")
+            ? "[data-a11y-dialog-close]"
+            : "";
+          return `<${tagName}${id}${closeMarker}>`;
+        };
+
+        const renderIssue = (issue) => {
+          const item = document.createElement("li");
+          item.className = `demo-issue demo-issue--${issue.severity}`;
+
+          const heading = document.createElement("div");
+          heading.className = "demo-issue__heading";
+
+          const severity = document.createElement("span");
+          severity.className = `demo-severity demo-severity--${issue.severity}`;
+          severity.textContent = issue.severity;
+
+          const code = document.createElement("code");
+          code.textContent = issue.code;
+
+          const message = document.createElement("p");
+          message.className = "demo-issue__message";
+          message.textContent = issue.message;
+
+          const context = document.createElement("p");
+          context.className = "demo-issue__context";
+          context.textContent = `Dialog: ${describeElement(issue.dialog)} · Element: ${describeElement(issue.element)}`;
+
+          heading.append(severity, code);
+          item.append(heading, message, context);
+          return item;
+        };
+
+        loadBrokenButton.addEventListener("click", () => {
+          editor.value = brokenFixture;
+          setPendingState("Broken fixture loaded. Run diagnostics to inspect it.");
+        });
+
+        loadValidButton.addEventListener("click", () => {
+          editor.value = validFixture;
+          setPendingState("Valid fixture loaded. Run diagnostics to verify it.");
+        });
+
+        runButton.addEventListener("click", () => {
+          const template = document.createElement("template");
+          template.innerHTML = editor.value;
+          const markedDialogs = template.content.querySelectorAll("dialog[data-a11y-dialog]");
+          const issues = inspectA11yDialogs(template.content);
+          const errors = issues.filter((issue) => issue.severity === "error");
+          const warnings = issues.filter((issue) => issue.severity === "warning");
+
+          errorCount.textContent = String(errors.length);
+          warningCount.textContent = String(warnings.length);
+          dialogCount.textContent = String(markedDialogs.length);
+          issueList.replaceChildren();
+
+          if (markedDialogs.length === 0) {
+            state.dataset.demoState = "empty";
+            state.textContent = "No marked dialog";
+            status.textContent = "No dialog with data-a11y-dialog was found in the fixture.";
+            const item = document.createElement("li");
+            item.className = "demo-empty";
+            item.textContent = "Add data-a11y-dialog to a native dialog, then run the scan again.";
+            issueList.append(item);
+            return;
+          }
+
+          if (issues.length === 0) {
+            state.dataset.demoState = "clean";
+            state.textContent = "No issues found";
+            status.textContent =
+              "No configured diagnostics were found. This is not a WCAG conformance result.";
+            const item = document.createElement("li");
+            item.className = "demo-empty demo-empty--clean";
+            item.textContent = "The fixture satisfies the diagnostics addon’s static markup checks.";
+            issueList.append(item);
+            return;
+          }
+
+          state.dataset.demoState = "issues";
+          state.textContent = "Issues found";
+          status.textContent = `${issues.length} issues found: ${errors.length} errors and ${warnings.length} warnings.`;
+          issues.forEach((issue) => issueList.append(renderIssue(issue)));
+        });
+      }
+    </script>
+  </body>
+</html>

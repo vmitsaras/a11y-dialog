@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Morphing Dialog Transition Demo | A11y Dialog</title>
+    <meta name="description" content="Try an opener-to-dialog transition with View Transition and CSS fallback strategies, focus restoration, Escape handling, and reduced-motion support.">
+    <link rel="canonical" href="https://vmitsaras.github.io/a11y-dialog/examples/morphing-dialog/">
+    <meta name="robots" content="index,follow">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="A11y Dialog">
+    <meta property="og:title" content="Morphing Dialog Transition Demo | A11y Dialog">
+    <meta property="og:description" content="Try an opener-to-dialog transition with View Transition and CSS fallback strategies, focus restoration, Escape handling, and reduced-motion support.">
+    <meta property="og:url" content="https://vmitsaras.github.io/a11y-dialog/examples/morphing-dialog/">
+    <meta property="og:image" content="https://vmitsaras.github.io/a11y-dialog/social-preview.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1280">
+    <meta property="og:image:height" content="640">
+    <meta property="og:image:alt" content="A11y Dialog — accessible native dialogs with predictable focus and lifecycle behavior.">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://vmitsaras.github.io/a11y-dialog/social-preview.png">
+    <meta name="twitter:image:alt" content="A11y Dialog — accessible native dialogs with predictable focus and lifecycle behavior.">
+    <meta name="twitter:title" content="Morphing Dialog Transition Demo | A11y Dialog">
+    <meta name="twitter:description" content="Try an opener-to-dialog transition with View Transition and CSS fallback strategies, focus restoration, Escape handling, and reduced-motion support.">
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../../dist/styles.css">
+    <link rel="stylesheet" href="../../dist/morph.css">
+    <link rel="stylesheet" href="../../site-header.css">
+    <link rel="stylesheet" href="./styles.css">
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebPage",
+            "@id": "https://vmitsaras.github.io/a11y-dialog/examples/morphing-dialog/#webpage",
+            "url": "https://vmitsaras.github.io/a11y-dialog/examples/morphing-dialog/",
+            "name": "Morphing Dialog Transition Demo | A11y Dialog",
+            "description": "Try an opener-to-dialog transition with View Transition and CSS fallback strategies, focus restoration, Escape handling, and reduced-motion support.",
+            "inLanguage": "en",
+            "primaryImageOfPage": {
+              "@id": "https://vmitsaras.github.io/a11y-dialog/social-preview.png#image"
+            },
+            "mainEntity": {
+              "@id": "https://vmitsaras.github.io/a11y-dialog/examples/morphing-dialog/#software"
+            }
+          },
+          {
+            "@type": "SoftwareSourceCode",
+            "@id": "https://vmitsaras.github.io/a11y-dialog/examples/morphing-dialog/#software",
+            "name": "A11y Dialog",
+            "description": "A framework-agnostic native dialog helper with accessible focus, keyboard, lifecycle, and cleanup behavior.",
+            "codeRepository": "https://github.com/vmitsaras/a11y-dialog",
+            "image": {
+              "@id": "https://vmitsaras.github.io/a11y-dialog/social-preview.png#image"
+            },
+            "programmingLanguage": [
+              "TypeScript",
+              "JavaScript"
+            ],
+            "runtimePlatform": "Browser",
+            "version": "0.0.0",
+            "license": "https://github.com/vmitsaras/a11y-dialog/blob/main/LICENSE",
+            "keywords": [
+              "accessibility",
+              "dialog",
+              "modal",
+              "focus-management",
+              "view-transitions",
+              "typescript"
+            ],
+            "featureList": [
+              "Opener-to-dialog View Transition strategy",
+              "CSS scale and fade fallback",
+              "Reduced-motion opt-out",
+              "Initial focus and focus restoration",
+              "Selectable transition strategy demo"
+            ],
+            "author": {
+              "@id": "https://github.com/vmitsaras/#person"
+            },
+            "creator": {
+              "@id": "https://github.com/vmitsaras/#person"
+            },
+            "sameAs": [
+              "https://github.com/vmitsaras/a11y-dialog"
+            ],
+            "targetProduct": {
+              "@type": "SoftwareApplication",
+              "name": "A11y Dialog",
+              "applicationCategory": "DeveloperApplication",
+              "operatingSystem": "Any",
+              "runtimePlatform": "Browser"
+            }
+          },
+          {
+            "@type": "ImageObject",
+            "@id": "https://vmitsaras.github.io/a11y-dialog/social-preview.png#image",
+            "url": "https://vmitsaras.github.io/a11y-dialog/social-preview.png",
+            "contentUrl": "https://vmitsaras.github.io/a11y-dialog/social-preview.png",
+            "encodingFormat": "image/png",
+            "width": 1280,
+            "height": 640,
+            "caption": "A11y Dialog — accessible native dialogs with predictable focus and lifecycle behavior."
+          },
+          {
+            "@type": "Person",
+            "@id": "https://github.com/vmitsaras/#person",
+            "name": "Vasileios Mitsaras",
+            "url": "https://github.com/vmitsaras/",
+            "sameAs": [
+              "https://github.com/vmitsaras/",
+              "https://linkedin.com/in/vasilis-mitsaras"
+            ]
+          }
+        ]
+      }
+    </script>
+    <link rel="stylesheet" href="../../demo-theme.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to morphing dialog demo</a>
+
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="site-header__logo" href="../../" aria-label="A11y Dialog home">
+          <span class="site-header__logo-mark">A11y</span>
+          <span>Dialog</span>
+        </a>
+        <nav class="site-header__nav" aria-label="Main navigation">
+          <ul class="site-header__nav-list">
+            <li><a href="../../">Overview</a></li>
+            <li><a href="../../#examples">Examples</a></li>
+            <li><a href="https://github.com/vmitsaras/a11y-dialog">GitHub</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main class="demo-page" id="main-content">
+      <header class="demo-hero">
+        <div class="demo-hero__copy">
+          <p class="demo-eyebrow">Creative studio example</p>
+          <h1>Review a campaign with a morphing dialog</h1>
+          <p class="demo-hero__description">
+            A publish button transforms into a focused review dialog when the
+            browser supports View Transitions, with a lightweight CSS fallback
+            and an immediate reduced-motion path.
+          </p>
+          <div class="demo-hero__links">
+            <a class="demo-button" href="#live-example">Try the example</a>
+            <a class="demo-button demo-button--secondary" href="#developer-notes">View implementation notes</a>
+          </div>
+        </div>
+      </header>
+
+      <dl class="demo-facts demo-hero-facts">
+          <div>
+            <dt>Addon</dt>
+            <dd><code>@vmitsaras/a11y-dialog/morph</code></dd>
+          </div>
+          <div>
+            <dt>Default strategy</dt>
+            <dd>Automatic progressive enhancement</dd>
+          </div>
+          <div>
+            <dt>Focus</dt>
+            <dd>Moves inside, then returns to the opener</dd>
+          </div>
+      </dl>
+
+      <section class="demo-section demo-brief" aria-labelledby="scenario-title">
+        <div class="demo-section__header">
+          <p class="demo-eyebrow">Scenario</p>
+          <h2 id="scenario-title">One last check before publishing</h2>
+        </div>
+        <p>
+          A creative lead is ready to publish a product campaign. They need to
+          review the audience, schedule, and accessibility checks without losing
+          their place in the studio dashboard.
+        </p>
+      </section>
+
+      <section class="demo-section demo-instructions" aria-labelledby="try-title">
+        <div class="demo-section__header">
+          <p class="demo-eyebrow">Test guide</p>
+          <h2 id="try-title">Try it</h2>
+        </div>
+        <ol class="demo-list">
+          <li>Choose <strong>Automatic</strong>, <strong>CSS fallback</strong>, or <strong>No animation</strong>.</li>
+          <li>Tab to <strong>Review and publish</strong>, then press <kbd>Enter</kbd> or <kbd>Space</kbd>.</li>
+          <li>Confirm focus moves to <strong>Publish campaign</strong> inside the dialog.</li>
+          <li>Close with <kbd>Escape</kbd>, the backdrop, or a visible close button and confirm focus returns.</li>
+          <li>Enable reduced motion in the browser or operating system and confirm the automatic strategy becomes immediate.</li>
+        </ol>
+      </section>
+
+      <section class="demo-section" id="live-example" aria-labelledby="example-title">
+        <div class="demo-section__header">
+          <p class="demo-eyebrow">Live example</p>
+          <h2 id="example-title">Campaign review</h2>
+          <p>Changing the strategy updates the dialog data attribute used by the addon on its next open.</p>
+        </div>
+
+        <div class="demo-studio">
+          <div class="demo-studio__toolbar">
+            <div>
+              <p class="demo-studio__label">Current project</p>
+              <h3>Autumn product launch</h3>
+            </div>
+            <span class="demo-badge">Draft saved</span>
+          </div>
+
+          <div class="demo-studio__canvas" aria-label="Campaign preview">
+            <p class="demo-studio__kicker">New season · calmer workflow</p>
+            <p class="demo-studio__headline">Make room for work that matters.</p>
+            <p class="demo-studio__caption">Campaign preview with approved copy and color contrast.</p>
+          </div>
+
+          <div class="demo-studio__controls">
+            <div class="demo-field">
+              <label for="morph-strategy">Transition strategy</label>
+              <select id="morph-strategy" aria-describedby="strategy-hint">
+                <option value="auto">Automatic</option>
+                <option value="css">CSS fallback</option>
+                <option value="none">No animation</option>
+              </select>
+              <p id="strategy-hint">Automatic uses View Transitions when supported and motion is allowed.</p>
+            </div>
+
+            <button
+              class="demo-publish-button"
+              id="campaign-dialog-trigger"
+              type="button"
+              data-a11y-dialog-morph-name="campaign-review"
+            >
+              Review and publish
+            </button>
+          </div>
+        </div>
+
+        <p class="demo-status" id="campaign-status" role="status">
+          Campaign is still a draft. Automatic transition strategy selected.
+        </p>
+
+        <dialog
+          class="a11y-dialog campaign-dialog"
+          id="campaign-dialog"
+          data-a11y-dialog
+          data-a11y-dialog-morph
+          data-a11y-dialog-morph-strategy="auto"
+          data-a11y-dialog-morph-source="#campaign-dialog-trigger"
+          data-a11y-dialog-morph-duration="260"
+          data-a11y-dialog-morph-easing="cubic-bezier(0.2, 0, 0, 1)"
+          data-a11y-dialog-morph-direction="both"
+          aria-labelledby="campaign-dialog-title"
+          aria-describedby="campaign-dialog-description"
+        >
+          <div class="a11y-dialog__surface">
+            <header class="a11y-dialog__header">
+              <div>
+                <p class="campaign-dialog__eyebrow">Final review</p>
+                <h2 class="a11y-dialog__title" id="campaign-dialog-title">Publish Autumn product launch?</h2>
+              </div>
+              <button class="a11y-dialog__button" type="button" data-a11y-dialog-close>
+                Close
+              </button>
+            </header>
+
+            <div class="a11y-dialog__body">
+              <p id="campaign-dialog-description">
+                Check the audience, schedule, and accessibility review before publishing.
+              </p>
+              <dl class="campaign-dialog__review">
+                <div>
+                  <dt>Audience</dt>
+                  <dd>Newsletter subscribers</dd>
+                </div>
+                <div>
+                  <dt>Schedule</dt>
+                  <dd>Monday at 09:30</dd>
+                </div>
+                <div>
+                  <dt>Accessibility review</dt>
+                  <dd>Copy, headings, and color contrast checked</dd>
+                </div>
+                <div>
+                  <dt>Transition</dt>
+                  <dd id="campaign-dialog-strategy">Automatic progressive enhancement</dd>
+                </div>
+              </dl>
+            </div>
+
+            <div class="a11y-dialog__actions">
+              <button class="a11y-dialog__button" type="button" data-a11y-dialog-close>
+                Keep as draft
+              </button>
+              <button
+                class="a11y-dialog__button a11y-dialog__button--primary"
+                id="publish-campaign"
+                type="button"
+                data-a11y-dialog-close
+                data-a11y-dialog-initial-focus
+              >
+                Publish campaign
+              </button>
+            </div>
+          </div>
+        </dialog>
+      </section>
+
+      <section class="demo-section" aria-labelledby="accessibility-title">
+        <div class="demo-section__header">
+          <p class="demo-eyebrow">Accessibility notes</p>
+          <h2 id="accessibility-title">Semantics and motion stay separate</h2>
+        </div>
+        <div class="demo-grid">
+          <article class="demo-card">
+            <h3>Keyboard and focus</h3>
+            <ul class="demo-list">
+              <li>The opener and all dialog actions are native buttons.</li>
+              <li>Focus moves to the primary action after open.</li>
+              <li>Tab remains inside the modal and Escape closes it.</li>
+              <li>Close restores focus to the opener when it remains connected.</li>
+            </ul>
+          </article>
+          <article class="demo-card">
+            <h3>Name, description, and status</h3>
+            <ul class="demo-list">
+              <li>A visible heading provides the dialog name through <code>aria-labelledby</code>.</li>
+              <li>Concise supporting copy is connected with <code>aria-describedby</code>.</li>
+              <li>The persistent status reports whether the campaign was published or kept as a draft.</li>
+            </ul>
+          </article>
+          <article class="demo-card">
+            <h3>Reduced motion and fallback</h3>
+            <ul class="demo-list">
+              <li>The automatic strategy skips motion when reduced motion is requested.</li>
+              <li>Browsers without View Transitions use the optional CSS entry and exit path.</li>
+              <li>The dialog remains functional when the morph stylesheet cannot animate.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="demo-section" id="developer-notes" aria-labelledby="developer-title">
+        <div class="demo-section__header">
+          <p class="demo-eyebrow">Developer notes</p>
+          <h2 id="developer-title">Copy the plugin contract, not the studio chrome</h2>
+          <p>The page shell uses <code>demo-*</code> classes; the native dialog keeps the package classes and data attributes.</p>
+        </div>
+        <div class="demo-code-grid">
+          <div class="demo-code">
+            <h3>Imports and initialization</h3>
+            <pre><code>import { createA11yDialog } from "@vmitsaras/a11y-dialog";
+import { createA11yDialogMorph } from "@vmitsaras/a11y-dialog/morph";
+import "@vmitsaras/a11y-dialog/styles.css";
+import "@vmitsaras/a11y-dialog/morph.css";
+
+const instance = createA11yDialog(dialog, {
+  closeOnBackdrop: true
+});
+const morph = createA11yDialogMorph(instance);
+
+trigger.addEventListener("click", () =&gt; {
+  morph.open(trigger);
+});</code></pre>
+          </div>
+          <div class="demo-code">
+            <h3>Declarative morph options</h3>
+            <pre><code>&lt;dialog
+  data-a11y-dialog
+  data-a11y-dialog-morph
+  data-a11y-dialog-morph-strategy="auto"
+  data-a11y-dialog-morph-source="#trigger"
+  data-a11y-dialog-morph-duration="260"
+  data-a11y-dialog-morph-direction="both"
+  aria-labelledby="dialog-title"
+&gt;
+  ...
+&lt;/dialog&gt;</code></pre>
+          </div>
+        </div>
+        <div class="demo-note">
+          <h3>Known limits</h3>
+          <ul class="demo-list">
+            <li>View Transition interpolation is controlled by the browser and needs visual testing in each target browser.</li>
+            <li>Direct calls to native <code>dialog.close()</code> bypass the core before-close lifecycle; use the core or morph instance.</li>
+            <li>This package does not polyfill native <code>&lt;dialog&gt;</code> or replace manual screen reader testing.</li>
+          </ul>
+        </div>
+      </section>
+    </main>
+
+    <footer class="demo-footer" data-demo-footer>
+      <div class="demo-footer__inner">
+        <div class="demo-footer__brand">
+          <p class="demo-footer__eyebrow">Accessibility plugin demo</p>
+          <p class="demo-footer__credit">
+            <span class="demo-footer__plugin">A11y Dialog</span>
+            <span class="demo-footer__separator" aria-hidden="true">&middot;</span>
+            Built by
+            <a class="demo-footer__link" href="https://github.com/vmitsaras/">Vasileios Mitsaras</a>
+            <span class="demo-footer__separator" aria-hidden="true">&middot;</span>
+            <a class="demo-footer__link" href="https://linkedin.com/in/vasilis-mitsaras">LinkedIn profile</a>
+          </p>
+          <p class="demo-footer__meta">
+            <span>@vmitsaras/a11y-dialog</span>
+            <span class="demo-footer__separator" aria-hidden="true">&middot;</span>
+            <span>MIT License</span>
+          </p>
+        </div>
+        <nav class="demo-footer__nav" aria-label="Project links">
+          <ul class="demo-footer__links">
+            <li class="demo-footer__item">
+              <a class="demo-footer__link" href="https://github.com/vmitsaras/a11y-dialog">GitHub repository</a>
+            </li>
+            <li class="demo-footer__item">
+              <a class="demo-footer__link" href="https://www.npmjs.com/package/@vmitsaras/a11y-dialog">npm package</a>
+            </li>
+            <li class="demo-footer__item">
+              <a class="demo-footer__link" href="https://github.com/vmitsaras/a11y-dialog#readme">Documentation</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <script type="module">
+      import { A11Y_DIALOG_EVENTS, createA11yDialog } from "../../dist/index.js";
+      import { createA11yDialogMorph } from "../../dist/morph.js";
+
+      const dialog = document.querySelector("#campaign-dialog");
+      const trigger = document.querySelector("#campaign-dialog-trigger");
+      const strategyControl = document.querySelector("#morph-strategy");
+      const strategyHint = document.querySelector("#strategy-hint");
+      const strategySummary = document.querySelector("#campaign-dialog-strategy");
+      const publishButton = document.querySelector("#publish-campaign");
+      const status = document.querySelector("#campaign-status");
+
+      if (dialog instanceof HTMLDialogElement &&
+          trigger instanceof HTMLButtonElement &&
+          strategyControl instanceof HTMLSelectElement &&
+          strategyHint instanceof HTMLElement &&
+          strategySummary instanceof HTMLElement &&
+          publishButton instanceof HTMLButtonElement &&
+          status instanceof HTMLElement) {
+        const strategyLabels = {
+          auto: "Automatic progressive enhancement",
+          css: "CSS scale and fade fallback",
+          none: "No animation"
+        };
+        const strategyHints = {
+          auto: "Automatic uses View Transitions when supported and motion is allowed.",
+          css: "CSS fallback uses scale, translate, and opacity without View Transitions.",
+          none: "No animation keeps open, close, and focus behavior immediate."
+        };
+        let published = false;
+        const instance = createA11yDialog(dialog, { closeOnBackdrop: true });
+        const morph = createA11yDialogMorph(instance);
+
+        strategyControl.addEventListener("change", () => {
+          const strategy = strategyControl.value;
+          dialog.dataset.a11yDialogMorphStrategy = strategy;
+          strategySummary.textContent = strategyLabels[strategy] ?? strategy;
+          strategyHint.textContent = strategyHints[strategy] ?? "";
+          status.textContent = `${strategyLabels[strategy] ?? strategy} selected. Campaign is still a draft.`;
+        });
+
+        dialog.addEventListener("click", (event) => {
+          if (event.target === publishButton) {
+            published = true;
+          }
+        }, { capture: true });
+
+        trigger.addEventListener("click", () => {
+          published = false;
+          morph.open(trigger);
+        });
+
+        dialog.addEventListener(A11Y_DIALOG_EVENTS.open, () => {
+          const strategy = dialog.dataset.a11yDialogMorphActiveStrategy ?? "none";
+          status.textContent = `Review dialog opened with the ${strategy} strategy.`;
+        });
+
+        dialog.addEventListener(A11Y_DIALOG_EVENTS.close, () => {
+          status.textContent = published
+            ? "Campaign published. Focus returned to Review and publish."
+            : "Campaign remains a draft. Focus returned to Review and publish.";
+        });
+      }
+    </script>
+  </body>
+</html>

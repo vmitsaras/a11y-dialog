@@ -1,0 +1,615 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Async Dialog Actions and Retry States | A11y Dialog</title>
+    <meta name="description" content="Test pending, success, error, retry, cancellation, and duplicate-submit protection in a native invite dialog with app-owned async work.">
+    <link rel="canonical" href="https://vmitsaras.github.io/a11y-dialog/examples/async-action/">
+    <meta name="robots" content="index,follow">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="A11y Dialog">
+    <meta property="og:title" content="Async Dialog Actions and Retry States | A11y Dialog">
+    <meta property="og:description" content="Test pending, success, error, retry, cancellation, and duplicate-submit protection in a native invite dialog with app-owned async work.">
+    <meta property="og:url" content="https://vmitsaras.github.io/a11y-dialog/examples/async-action/">
+    <meta property="og:image" content="https://vmitsaras.github.io/a11y-dialog/social-preview.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1280">
+    <meta property="og:image:height" content="640">
+    <meta property="og:image:alt" content="A11y Dialog — accessible native dialogs with predictable focus and lifecycle behavior.">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://vmitsaras.github.io/a11y-dialog/social-preview.png">
+    <meta name="twitter:image:alt" content="A11y Dialog — accessible native dialogs with predictable focus and lifecycle behavior.">
+    <meta name="twitter:title" content="Async Dialog Actions and Retry States | A11y Dialog">
+    <meta name="twitter:description" content="Test pending, success, error, retry, cancellation, and duplicate-submit protection in a native invite dialog with app-owned async work.">
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../../dist/styles.css">
+    <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="../../site-header.css">
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebPage",
+            "@id": "https://vmitsaras.github.io/a11y-dialog/examples/async-action/#webpage",
+            "url": "https://vmitsaras.github.io/a11y-dialog/examples/async-action/",
+            "name": "Async Dialog Actions and Retry States | A11y Dialog",
+            "description": "Test pending, success, error, retry, cancellation, and duplicate-submit protection in a native invite dialog with app-owned async work.",
+            "inLanguage": "en",
+            "primaryImageOfPage": {
+              "@id": "https://vmitsaras.github.io/a11y-dialog/social-preview.png#image"
+            },
+            "mainEntity": {
+              "@id": "https://vmitsaras.github.io/a11y-dialog/examples/async-action/#software"
+            }
+          },
+          {
+            "@type": "SoftwareSourceCode",
+            "@id": "https://vmitsaras.github.io/a11y-dialog/examples/async-action/#software",
+            "name": "A11y Dialog",
+            "description": "A framework-agnostic native dialog helper with accessible focus, keyboard, lifecycle, and cleanup behavior.",
+            "codeRepository": "https://github.com/vmitsaras/a11y-dialog",
+            "image": {
+              "@id": "https://vmitsaras.github.io/a11y-dialog/social-preview.png#image"
+            },
+            "programmingLanguage": [
+              "TypeScript",
+              "JavaScript"
+            ],
+            "runtimePlatform": "Browser",
+            "version": "0.0.0",
+            "license": "https://github.com/vmitsaras/a11y-dialog/blob/main/LICENSE",
+            "keywords": [
+              "accessibility",
+              "a11y",
+              "dialog",
+              "modal",
+              "focus-management",
+              "typescript"
+            ],
+            "featureList": [
+              "App-owned asynchronous dialog actions",
+              "Pending, success, error, and canceled states",
+              "Duplicate-submit prevention",
+              "Visible status messages and retry flow",
+              "Close-while-pending cancellation",
+              "Focus restoration to the dialog opener"
+            ],
+            "author": {
+              "@id": "https://github.com/vmitsaras/#person"
+            },
+            "creator": {
+              "@id": "https://github.com/vmitsaras/#person"
+            },
+            "sameAs": [
+              "https://github.com/vmitsaras/a11y-dialog"
+            ],
+            "targetProduct": {
+              "@type": "SoftwareApplication",
+              "name": "A11y Dialog",
+              "applicationCategory": "DeveloperApplication",
+              "operatingSystem": "Any",
+              "runtimePlatform": "Browser"
+            }
+          },
+          {
+            "@type": "ImageObject",
+            "@id": "https://vmitsaras.github.io/a11y-dialog/social-preview.png#image",
+            "url": "https://vmitsaras.github.io/a11y-dialog/social-preview.png",
+            "contentUrl": "https://vmitsaras.github.io/a11y-dialog/social-preview.png",
+            "encodingFormat": "image/png",
+            "width": 1280,
+            "height": 640,
+            "caption": "A11y Dialog — accessible native dialogs with predictable focus and lifecycle behavior."
+          },
+          {
+            "@type": "Person",
+            "@id": "https://github.com/vmitsaras/#person",
+            "name": "Vasileios Mitsaras",
+            "url": "https://github.com/vmitsaras/",
+            "sameAs": [
+              "https://github.com/vmitsaras/",
+              "https://linkedin.com/in/vasilis-mitsaras"
+            ]
+          }
+        ]
+      }
+    </script>
+    <link rel="stylesheet" href="../../demo-theme.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to demo content</a>
+
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="site-header__logo" href="../../" aria-label="A11y Dialog home">
+          <span class="site-header__logo-mark">A11y</span>
+          <span>Dialog</span>
+        </a>
+        <nav class="site-header__nav" aria-label="Main navigation">
+          <ul class="site-header__nav-list">
+            <li><a href="../../">Overview</a></li>
+            <li><a href="../../#examples">Examples</a></li>
+            <li><a href="https://github.com/vmitsaras/a11y-dialog">GitHub</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main class="demo-page" id="main-content">
+      <header class="demo-hero">
+        <div>
+          <p class="demo-eyebrow">Async action addon example</p>
+          <h1>Invite a teammate without losing the dialog state</h1>
+          <p class="demo-hero__description">
+            Wrap app-owned asynchronous work with pending, success, error,
+            retry, and cancellation states while the dialog helper continues
+            to own focus and keyboard behavior.
+          </p>
+          <nav class="demo-hero__links" aria-label="Page shortcuts">
+            <a class="demo-button" href="#live-demo">Try the live flow</a>
+            <a class="demo-button demo-button--secondary" href="#usage">Copy the setup</a>
+          </nav>
+        </div>
+
+      </header>
+
+      <dl class="demo-facts demo-hero-facts" aria-label="Example quick facts">
+          <div>
+            <dt>Scenario</dt>
+            <dd>Workspace invitation</dd>
+          </div>
+          <div>
+            <dt>States</dt>
+            <dd>Idle, pending, success, error, canceled</dd>
+          </div>
+          <div>
+            <dt>Async owner</dt>
+            <dd>Consuming application</dd>
+          </div>
+          <div>
+            <dt>Runtime dependencies</dt>
+            <dd>None</dd>
+          </div>
+      </dl>
+
+      <section class="demo-section" aria-labelledby="scenario-title">
+        <div class="demo-section__header">
+          <p class="demo-eyebrow">Scenario</p>
+          <h2 id="scenario-title">A small action with several important outcomes</h2>
+        </div>
+        <div class="demo-prose">
+          <p>
+            A workspace owner invites a teammate by email. The invitation may
+            succeed, fail and need a retry, or be canceled when the dialog
+            closes before the request finishes.
+          </p>
+          <p>
+            User goal: understand what is happening, avoid duplicate invites,
+            recover from an error, and return to the opener after closing the
+            dialog.
+          </p>
+        </div>
+      </section>
+
+      <section class="demo-section" aria-labelledby="try-title">
+        <div class="demo-section__header">
+          <p class="demo-eyebrow">Try it</p>
+          <h2 id="try-title">Exercise the full state flow</h2>
+        </div>
+        <ol class="demo-steps">
+          <li>Open the invite dialog and confirm focus moves to the email field.</li>
+          <li>Choose <strong>Success</strong>, submit, and observe the disabled action and pending status.</li>
+          <li>Choose <strong>Error</strong>, submit again, then switch back to Success and retry.</li>
+          <li>Start another action and press Escape before it finishes to test cancellation and focus restoration.</li>
+        </ol>
+      </section>
+
+      <section class="demo-section" id="live-demo" aria-labelledby="live-demo-title">
+        <div class="demo-section__header">
+          <p class="demo-eyebrow">Live demo</p>
+          <h2 id="live-demo-title">Workspace access</h2>
+          <p>
+            The simulated result selector is demo-only. The addon receives a
+            callback and never performs a network request itself.
+          </p>
+        </div>
+
+        <div class="demo-stage">
+          <div class="demo-stage__summary">
+            <div>
+              <p class="demo-stage__label">Current plan</p>
+              <p class="demo-stage__value">Studio · 7 of 12 seats used</p>
+            </div>
+            <div>
+              <p class="demo-stage__label">Async state</p>
+              <output class="demo-state" data-demo-state>Idle</output>
+            </div>
+          </div>
+
+          <div class="demo-team" aria-label="Current workspace members">
+            <div class="demo-avatar" aria-hidden="true">VM</div>
+            <div>
+              <p class="demo-team__name">Vasileios Mitsaras</p>
+              <p class="demo-team__meta">Owner · Active</p>
+            </div>
+            <span class="demo-badge">Workspace owner</span>
+          </div>
+
+          <div class="demo-stage__actions">
+            <button class="demo-button" id="invite-trigger" type="button">
+              Invite teammate
+            </button>
+            <p class="demo-outcome" data-demo-outcome role="status">
+              No invitation has been attempted in this demo.
+            </p>
+          </div>
+        </div>
+
+        <dialog
+          class="a11y-dialog"
+          id="invite-dialog"
+          data-a11y-dialog
+          data-a11y-dialog-async-status-target="#invite-status"
+          aria-labelledby="invite-title"
+          aria-describedby="invite-description"
+        >
+          <div class="a11y-dialog__surface">
+            <header class="a11y-dialog__header">
+              <div>
+                <p class="demo-dialog__eyebrow">Studio workspace</p>
+                <h2 class="a11y-dialog__title" id="invite-title">Invite a teammate</h2>
+              </div>
+              <button class="a11y-dialog__button" type="button" data-a11y-dialog-close>
+                Close
+              </button>
+            </header>
+
+            <p class="a11y-dialog__description" id="invite-description">
+              Enter a teammate’s details, then choose the simulated result for
+              this local example. No invitation is sent.
+            </p>
+
+            <form class="demo-form" id="invite-form" data-a11y-dialog-async-action="invite">
+              <div class="demo-field">
+                <label for="invite-email">Work email</label>
+                <input
+                  id="invite-email"
+                  name="email"
+                  type="email"
+                  autocomplete="email"
+                  value="sam@example.com"
+                  required
+                  aria-describedby="invite-email-hint"
+                  data-a11y-dialog-initial-focus
+                >
+                <p class="demo-field__hint" id="invite-email-hint">Use a valid email address.</p>
+              </div>
+
+              <div class="demo-field">
+                <label for="invite-role">Workspace role</label>
+                <select id="invite-role" name="role">
+                  <option value="editor">Editor</option>
+                  <option value="viewer">Viewer</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </div>
+
+              <fieldset class="demo-result-picker">
+                <legend>Simulated result</legend>
+                <label>
+                  <input type="radio" name="demo-result" value="success" checked>
+                  <span><strong>Success</strong> — show the completed state.</span>
+                </label>
+                <label>
+                  <input type="radio" name="demo-result" value="error">
+                  <span><strong>Error</strong> — restore the button and allow retry.</span>
+                </label>
+              </fieldset>
+
+              <p class="demo-form__status" id="invite-status" role="status"></p>
+
+              <footer class="a11y-dialog__actions">
+                <button class="a11y-dialog__button" type="button" data-a11y-dialog-close>
+                  Cancel
+                </button>
+                <button
+                  class="a11y-dialog__button a11y-dialog__button--primary demo-submit"
+                  type="submit"
+                >
+                  <span class="demo-submit__idle">Send invitation</span>
+                  <span class="demo-submit__pending">Sending invitation…</span>
+                </button>
+              </footer>
+            </form>
+          </div>
+        </dialog>
+      </section>
+
+      <section class="demo-section" id="usage" aria-labelledby="usage-title">
+        <div class="demo-section__header">
+          <p class="demo-eyebrow">Implementation</p>
+          <h2 id="usage-title">Install and initialize</h2>
+          <p>Import the core helper and the optional async-action subpath separately.</p>
+        </div>
+
+        <div class="demo-code-grid">
+          <div class="demo-code">
+            <h3>Install</h3>
+            <pre><code>npm install @vmitsaras/a11y-dialog</code></pre>
+          </div>
+          <div class="demo-code">
+            <h3>Imports</h3>
+            <pre><code>import { createA11yDialog } from "@vmitsaras/a11y-dialog";
+import { createA11yDialogAsyncAction } from "@vmitsaras/a11y-dialog/async-action";
+import "@vmitsaras/a11y-dialog/styles.css";</code></pre>
+          </div>
+        </div>
+
+        <div class="demo-code">
+          <h3>Semantic markup</h3>
+          <pre><code>&lt;p id="invite-status" role="status"&gt;&lt;/p&gt;
+
+&lt;dialog
+  data-a11y-dialog
+  data-a11y-dialog-async-status-target="#invite-status"
+  aria-labelledby="invite-title"
+&gt;
+  &lt;h2 id="invite-title"&gt;Invite a teammate&lt;/h2&gt;
+  &lt;form data-a11y-dialog-async-action="invite"&gt;
+    &lt;label for="email"&gt;Work email&lt;/label&gt;
+    &lt;input id="email" name="email" type="email" required&gt;
+    &lt;button type="submit"&gt;Send invitation&lt;/button&gt;
+  &lt;/form&gt;
+  &lt;button type="button" data-a11y-dialog-close&gt;Cancel&lt;/button&gt;
+&lt;/dialog&gt;</code></pre>
+        </div>
+
+        <div class="demo-code">
+          <h3>Async callback</h3>
+          <pre><code>const dialogInstance = createA11yDialog(dialog);
+const submitButton = form.querySelector("button[type='submit']");
+
+createA11yDialogAsyncAction(dialog, {
+  trigger: form,
+  statusTarget: status,
+  busyTarget: submitButton,
+  pendingMessage: "Sending invitation…",
+  successMessage: "Invitation sent.",
+  errorMessage: "Invitation failed. Check the details and retry.",
+  pendingClose: "abort",
+  action: ({ signal }) =&gt; inviteTeammate(form, { signal })
+});
+
+opener.addEventListener("click", () =&gt; dialogInstance.open(opener));</code></pre>
+        </div>
+      </section>
+
+      <section class="demo-section" aria-labelledby="api-title">
+        <div class="demo-section__header">
+          <p class="demo-eyebrow">API reference</p>
+          <h2 id="api-title">Options used in this example</h2>
+        </div>
+        <div class="demo-table-wrap" tabindex="0" role="region" aria-label="Async action options table">
+          <table>
+            <thead>
+              <tr>
+                <th>Option</th>
+                <th>Value here</th>
+                <th>Purpose</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>action</code></td>
+                <td>Local callback</td>
+                <td>Owns the work and receives a cooperative <code>AbortSignal</code>.</td>
+              </tr>
+              <tr>
+                <td><code>trigger</code></td>
+                <td><code>&lt;form&gt;</code></td>
+                <td>Runs on native form submission.</td>
+              </tr>
+              <tr>
+                <td><code>statusTarget</code></td>
+                <td><code>#invite-status</code></td>
+                <td>Receives pending, success, and error messages.</td>
+              </tr>
+              <tr>
+                <td><code>pendingClose</code></td>
+                <td><code>"abort"</code></td>
+                <td>Restores UI state and suppresses late updates after close.</td>
+              </tr>
+              <tr>
+                <td><code>busyTarget</code></td>
+                <td>Submit button</td>
+                <td>Keeps the live status region outside the busy subtree.</td>
+              </tr>
+              <tr>
+                <td><code>closeOnSuccess</code></td>
+                <td><code>false</code></td>
+                <td>Keeps the dialog open so the success status remains available.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="demo-section demo-section--split" aria-labelledby="behavior-title">
+        <div>
+          <p class="demo-eyebrow">Accessibility</p>
+          <h2 id="behavior-title">Behavior to preserve</h2>
+          <ul class="demo-checklist">
+            <li>Native form submission provides keyboard and constraint-validation behavior.</li>
+            <li>The submit button is disabled during pending work, preventing duplicate activation.</li>
+            <li>An existing visible <code>role="status"</code> region receives concise state messages.</li>
+            <li>The async addon never moves focus; the core dialog restores focus after close.</li>
+            <li>Escape closes the dialog and aborts pending UI work by default.</li>
+            <li>No state depends on color, animation, pointer input, or hidden generated markup.</li>
+          </ul>
+        </div>
+        <div>
+          <p class="demo-eyebrow">Keyboard</p>
+          <h2>Interaction summary</h2>
+          <dl class="demo-keyboard">
+            <div><dt><kbd>Tab</kbd></dt><dd>Moves through form and dialog controls.</dd></div>
+            <div><dt><kbd>Shift</kbd> + <kbd>Tab</kbd></dt><dd>Moves backward through dialog controls.</dd></div>
+            <div><dt><kbd>Enter</kbd></dt><dd>Submits the form when the current control allows it.</dd></div>
+            <div><dt><kbd>Space</kbd></dt><dd>Activates focused buttons and radio controls.</dd></div>
+            <div><dt><kbd>Escape</kbd></dt><dd>Closes the dialog and restores focus to the opener.</dd></div>
+          </dl>
+        </div>
+      </section>
+
+      <section class="demo-section demo-section--split" aria-labelledby="developer-title">
+        <div>
+          <p class="demo-eyebrow">Developer notes</p>
+          <h2 id="developer-title">Copy the boundary, not the simulation</h2>
+          <ul class="demo-checklist">
+            <li>The local page imports <code>../../dist/index.js</code> and <code>../../dist/async-action.js</code>.</li>
+            <li><code>[data-a11y-dialog-async-action]</code> marks the native form trigger.</li>
+            <li><code>[data-a11y-dialog-async-state]</code> exposes the current state for styling and diagnostics.</li>
+            <li>The simulated timer and result selector belong only to this demo.</li>
+            <li>Production code should pass real app-owned work through the callback.</li>
+          </ul>
+        </div>
+        <div>
+          <p class="demo-eyebrow">Limitations</p>
+          <h2>What the addon does not do</h2>
+          <ul class="demo-checklist">
+            <li>It does not fetch, submit, validate business rules, cache, or persist data.</li>
+            <li>Aborting the signal cannot undo external work that ignores cancellation.</li>
+            <li>Status-region behavior still needs manual testing with supported browser and assistive-technology combinations.</li>
+            <li>The package does not polyfill native <code>&lt;dialog&gt;</code>.</li>
+          </ul>
+        </div>
+      </section>
+    </main>
+
+    <footer class="demo-footer" data-demo-footer>
+      <div class="demo-footer__inner">
+        <div class="demo-footer__brand">
+          <p class="demo-footer__eyebrow">Accessibility plugin demo</p>
+          <p class="demo-footer__credit">
+            <span class="demo-footer__plugin">A11y Dialog</span>
+            <span class="demo-footer__separator" aria-hidden="true">&middot;</span>
+            Built by <a class="demo-footer__link" href="https://github.com/vmitsaras/">Vasileios Mitsaras</a>
+            <span class="demo-footer__separator" aria-hidden="true">&middot;</span>
+            <a class="demo-footer__link" href="https://linkedin.com/in/vasilis-mitsaras">LinkedIn profile</a>
+          </p>
+          <p class="demo-footer__meta">
+            <span>@vmitsaras/a11y-dialog</span>
+            <span class="demo-footer__separator" aria-hidden="true">&middot;</span>
+            <span>MIT License</span>
+          </p>
+        </div>
+        <nav class="demo-footer__nav" aria-label="Project links">
+          <ul class="demo-footer__links">
+            <li><a class="demo-footer__link" href="https://github.com/vmitsaras/a11y-dialog">GitHub repository</a></li>
+            <li><a class="demo-footer__link" href="https://www.npmjs.com/package/@vmitsaras/a11y-dialog">npm package</a></li>
+            <li><a class="demo-footer__link" href="https://github.com/vmitsaras/a11y-dialog#async-action-addon">Async action documentation</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <script type="module">
+      import { A11Y_DIALOG_EVENTS, createA11yDialog } from "../../dist/index.js";
+      import {
+        A11Y_DIALOG_ASYNC_ACTION_EVENTS,
+        createA11yDialogAsyncAction
+      } from "../../dist/async-action.js";
+
+      const dialog = document.querySelector("#invite-dialog");
+      const opener = document.querySelector("#invite-trigger");
+      const form = document.querySelector("#invite-form");
+      const submit = form?.querySelector("button[type='submit']");
+      const status = document.querySelector("#invite-status");
+      const stateOutput = document.querySelector("[data-demo-state]");
+      const outcome = document.querySelector("[data-demo-outcome]");
+
+      const waitForDemo = (signal) =>
+        new Promise((resolve, reject) => {
+          if (signal?.aborted) {
+            reject(new DOMException("The demo action was aborted.", "AbortError"));
+            return;
+          }
+
+          const timer = window.setTimeout(resolve, 1400);
+          signal?.addEventListener(
+            "abort",
+            () => {
+              window.clearTimeout(timer);
+              reject(new DOMException("The demo action was aborted.", "AbortError"));
+            },
+            { once: true }
+          );
+        });
+
+      if (
+        dialog instanceof HTMLDialogElement &&
+        opener instanceof HTMLButtonElement &&
+        form instanceof HTMLFormElement &&
+        submit instanceof HTMLButtonElement &&
+        status instanceof HTMLElement
+      ) {
+        const dialogInstance = createA11yDialog(dialog);
+        const asyncAction = createA11yDialogAsyncAction(dialog, {
+          trigger: form,
+          statusTarget: status,
+          pendingMessage: "Sending the invitation. Duplicate submission is disabled.",
+          successMessage: ({ result }) =>
+            `Invitation ready for ${result.email} as ${result.role}. No network request was made.`,
+          errorMessage: "The simulated invitation failed. Choose Success and retry.",
+          canceledMessage: null,
+          pendingClose: "abort",
+          closeOnSuccess: false,
+          clearStatusOnReset: true,
+          busyTarget: submit,
+          action: async ({ signal }) => {
+            const formData = new FormData(form);
+            const email = String(formData.get("email") ?? "");
+            const role = String(formData.get("role") ?? "editor");
+            const result = String(formData.get("demo-result") ?? "success");
+
+            await waitForDemo(signal);
+
+            if (result === "error") {
+              throw new Error("Simulated invitation failure");
+            }
+
+            return { email, role };
+          }
+        });
+
+        opener.addEventListener("click", () => {
+          dialogInstance.open(opener);
+        });
+
+        dialog.addEventListener(A11Y_DIALOG_ASYNC_ACTION_EVENTS.change, (event) => {
+          const state = event.detail.state;
+
+          if (stateOutput instanceof HTMLOutputElement) {
+            stateOutput.value = state.charAt(0).toUpperCase() + state.slice(1);
+            stateOutput.dataset.state = state;
+          }
+        });
+
+        dialog.addEventListener(A11Y_DIALOG_EVENTS.close, () => {
+          if (!(outcome instanceof HTMLElement)) {
+            return;
+          }
+
+          if (asyncAction.state === "success") {
+            outcome.textContent = "Invitation flow completed in the demo. Focus returned to Invite teammate.";
+          } else if (asyncAction.state === "canceled") {
+            outcome.textContent = "Pending invitation canceled. No invitation was sent.";
+          } else {
+            outcome.textContent = "Invite dialog closed. No invitation was sent.";
+          }
+        });
+      }
+    </script>
+  </body>
+</html>

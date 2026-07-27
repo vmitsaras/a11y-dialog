@@ -1,0 +1,230 @@
+[data-a11y-dialog-morph][data-a11y-dialog-morph-active-strategy="css"] {
+  --_a11y-dialog-morph-duration: var(--a11y-dialog-morph-duration, 180ms);
+  --_a11y-dialog-morph-easing: var(
+    --a11y-dialog-morph-easing,
+    cubic-bezier(0.2, 0, 0, 1)
+  );
+
+  opacity: 0;
+  transform: translateY(0.5rem) scale(0.97);
+  transition:
+    opacity var(--_a11y-dialog-morph-duration) var(--_a11y-dialog-morph-easing),
+    transform var(--_a11y-dialog-morph-duration) var(--_a11y-dialog-morph-easing);
+}
+
+[data-a11y-dialog-morph][data-a11y-dialog-morph-active-strategy="css"][data-a11y-dialog-morph-direction="close"],
+[data-a11y-dialog-morph][data-a11y-dialog-morph-active-strategy="css"][data-a11y-dialog-morph-direction="both"] {
+  transition:
+    display var(--_a11y-dialog-morph-duration) allow-discrete,
+    overlay var(--_a11y-dialog-morph-duration) allow-discrete,
+    opacity var(--_a11y-dialog-morph-duration) var(--_a11y-dialog-morph-easing),
+    transform var(--_a11y-dialog-morph-duration) var(--_a11y-dialog-morph-easing);
+  transition-behavior: allow-discrete;
+}
+
+[data-a11y-dialog-morph][data-a11y-dialog-morph-active-strategy="css"][open] {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+[data-a11y-dialog-morph][data-a11y-dialog-morph-active-strategy="css"].a11y-dialog--morph-closing {
+  opacity: 0;
+  transform: translateY(0.25rem) scale(0.985);
+}
+
+[data-a11y-dialog-morph][data-a11y-dialog-morph-active-strategy="css"]::backdrop {
+  opacity: 0;
+  transition: opacity var(--_a11y-dialog-morph-duration) var(--_a11y-dialog-morph-easing);
+}
+
+[data-a11y-dialog-morph][data-a11y-dialog-morph-active-strategy="css"][data-a11y-dialog-morph-direction="close"]::backdrop,
+[data-a11y-dialog-morph][data-a11y-dialog-morph-active-strategy="css"][data-a11y-dialog-morph-direction="both"]::backdrop {
+  transition:
+    display var(--_a11y-dialog-morph-duration) allow-discrete,
+    overlay var(--_a11y-dialog-morph-duration) allow-discrete,
+    opacity var(--_a11y-dialog-morph-duration) var(--_a11y-dialog-morph-easing);
+  transition-behavior: allow-discrete;
+}
+
+[data-a11y-dialog-morph][data-a11y-dialog-morph-active-strategy="css"][open]::backdrop {
+  opacity: 1;
+}
+
+[data-a11y-dialog-morph][data-a11y-dialog-morph-active-strategy="css"].a11y-dialog--morph-closing::backdrop {
+  opacity: 0;
+}
+
+@starting-style {
+  [data-a11y-dialog-morph][data-a11y-dialog-morph-active-strategy="css"][data-a11y-dialog-morph-direction="open"][open],
+  [data-a11y-dialog-morph][data-a11y-dialog-morph-active-strategy="css"][data-a11y-dialog-morph-direction="both"][open] {
+    opacity: 0;
+    transform: translateY(0.5rem) scale(0.97);
+  }
+
+  [data-a11y-dialog-morph][data-a11y-dialog-morph-active-strategy="css"][data-a11y-dialog-morph-direction="open"][open]::backdrop,
+  [data-a11y-dialog-morph][data-a11y-dialog-morph-active-strategy="css"][data-a11y-dialog-morph-direction="both"][open]::backdrop {
+    opacity: 0;
+  }
+}
+
+html.a11y-dialog-morph-is-transitioning::view-transition-group(*) {
+  animation-duration: var(--a11y-dialog-morph-duration, 180ms);
+  animation-timing-function: var(
+    --a11y-dialog-morph-easing,
+    cubic-bezier(0.2, 0, 0, 1)
+  );
+}
+
+html.a11y-dialog-morph-is-transitioning::view-transition-image-pair(*) {
+  animation-direction: normal;
+  animation-duration: var(--a11y-dialog-morph-duration, 180ms);
+  animation-fill-mode: both;
+  animation-timing-function: var(
+    --a11y-dialog-morph-easing,
+    cubic-bezier(0.2, 0, 0, 1)
+  );
+  background: var(--a11y-dialog-morph-new-background, Canvas);
+  border: 1px solid var(--a11y-dialog-morph-new-border-color, transparent);
+  isolation: auto;
+  overflow: clip;
+}
+
+html.a11y-dialog-morph-is-opening::view-transition-image-pair(*) {
+  animation-name: a11y-dialog-morph-shape;
+}
+
+html.a11y-dialog-morph-is-closing::view-transition-image-pair(*) {
+  animation-name: a11y-dialog-morph-shape;
+}
+
+html.a11y-dialog-morph-is-transitioning::view-transition-old(*),
+html.a11y-dialog-morph-is-transitioning::view-transition-new(*) {
+  animation-direction: normal;
+  animation-duration: var(--a11y-dialog-morph-duration, 180ms);
+  animation-fill-mode: both;
+  animation-timing-function: var(
+    --a11y-dialog-morph-easing,
+    cubic-bezier(0.2, 0, 0, 1)
+  );
+  mix-blend-mode: normal;
+  object-fit: contain;
+  object-position: center;
+}
+
+html.a11y-dialog-morph-is-opening::view-transition-old(*) {
+  animation-name: a11y-dialog-morph-opening-old-content;
+}
+
+html.a11y-dialog-morph-is-opening::view-transition-new(*) {
+  animation-name: a11y-dialog-morph-opening-new-content;
+}
+
+html.a11y-dialog-morph-is-closing::view-transition-old(*) {
+  animation-name: a11y-dialog-morph-closing-old-content;
+}
+
+html.a11y-dialog-morph-is-closing::view-transition-new(*) {
+  animation-name: a11y-dialog-morph-closing-new-content;
+}
+
+/* Keep one static new-page snapshot behind the named morph. This prevents the
+   browser's default page-wide crossfade without exposing duplicate live DOM. */
+html.a11y-dialog-morph-is-transitioning::view-transition-group(root) {
+  animation: none;
+}
+
+html.a11y-dialog-morph-is-transitioning::view-transition-image-pair(root) {
+  animation: none;
+  background: transparent;
+  border: 0;
+  isolation: auto;
+}
+
+html.a11y-dialog-morph-is-transitioning::view-transition-old(root) {
+  animation: none;
+  display: none;
+}
+
+html.a11y-dialog-morph-is-transitioning::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+  opacity: 1;
+}
+
+@keyframes a11y-dialog-morph-shape {
+  from {
+    background-color: var(--a11y-dialog-morph-old-background, Canvas);
+    border-color: var(--a11y-dialog-morph-old-border-color, transparent);
+    border-radius: var(--a11y-dialog-morph-old-radius, 0);
+  }
+
+  to {
+    background-color: var(--a11y-dialog-morph-new-background, Canvas);
+    border-color: var(--a11y-dialog-morph-new-border-color, transparent);
+    border-radius: var(--a11y-dialog-morph-new-radius, 0);
+  }
+}
+
+@keyframes a11y-dialog-morph-opening-old-content {
+  0% {
+    opacity: 1;
+  }
+
+  18%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes a11y-dialog-morph-opening-new-content {
+  0%,
+  62% {
+    opacity: 0;
+  }
+
+  88%,
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes a11y-dialog-morph-closing-old-content {
+  0% {
+    opacity: 1;
+  }
+
+  14%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes a11y-dialog-morph-closing-new-content {
+  0%,
+  82% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-a11y-dialog-morph][data-a11y-dialog-morph-active-strategy="css"],
+  [data-a11y-dialog-morph][data-a11y-dialog-morph-active-strategy="css"]::backdrop {
+    transition-duration: 0.001ms;
+  }
+
+  [data-a11y-dialog-morph][data-a11y-dialog-morph-active-strategy="css"],
+  [data-a11y-dialog-morph][data-a11y-dialog-morph-active-strategy="css"][open],
+  [data-a11y-dialog-morph][data-a11y-dialog-morph-active-strategy="css"].a11y-dialog--morph-closing {
+    transform: none;
+  }
+
+  html.a11y-dialog-morph-is-transitioning::view-transition-group(*),
+  html.a11y-dialog-morph-is-transitioning::view-transition-old(*),
+  html.a11y-dialog-morph-is-transitioning::view-transition-new(*) {
+    animation-duration: 0.001ms;
+  }
+}

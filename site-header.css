@@ -1,0 +1,114 @@
+.site-header {
+  background: #122033;
+  border-block-end: 1px solid #2d4058;
+  color: #f8fafc;
+}
+
+.site-header__inner {
+  align-items: center;
+  display: flex;
+  gap: 1.5rem;
+  inline-size: min(72rem, calc(100% - 2rem));
+  justify-content: space-between;
+  margin-inline: auto;
+  min-block-size: 4.5rem;
+  padding-block: 0.75rem;
+}
+
+.site-header__logo {
+  align-items: center;
+  color: #ffffff;
+  display: inline-flex;
+  flex: 0 0 auto;
+  font-size: 1.05rem;
+  font-weight: 800;
+  gap: 0.5rem;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+}
+
+.site-header__logo-mark {
+  background: #dff7ee;
+  border-radius: 0.3rem;
+  color: #0d3d35;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+  padding: 0.25rem 0.4rem;
+}
+
+.site-header__nav {
+  min-inline-size: 0;
+}
+
+.site-header__nav-list {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  justify-content: flex-end;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.site-header__nav a {
+  border-radius: 0.35rem;
+  color: #d8e2ed;
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 700;
+  padding: 0.55rem 0.7rem;
+  text-decoration: none;
+}
+
+.site-header__nav a:hover {
+  background: #24364c;
+  color: #ffffff;
+}
+
+.site-header__nav a[aria-current="page"] {
+  background: #dff7ee;
+  color: #0d3d35;
+}
+
+.site-header a:focus-visible {
+  outline: 3px solid #8ac7ff;
+  outline-offset: 2px;
+}
+
+@media (max-width: 48rem) {
+  .site-header__inner {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.65rem;
+    padding-block: 0.9rem;
+  }
+
+  .site-header__nav {
+    inline-size: 100%;
+  }
+
+  .site-header__nav-list {
+    justify-content: flex-start;
+  }
+
+  .site-header__nav a {
+    padding: 0.5rem 0.6rem;
+  }
+}
+
+@media (forced-colors: active) {
+  .site-header {
+    border-block-end: 2px solid CanvasText;
+  }
+
+  .site-header__logo-mark,
+  .site-header__nav a[aria-current="page"] {
+    border: 1px solid CanvasText;
+  }
+
+  .site-header a:focus-visible {
+    outline-color: Highlight;
+  }
+}

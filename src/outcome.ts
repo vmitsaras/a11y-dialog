@@ -63,7 +63,7 @@ export interface A11yDialogOutcomeOptions {
 }
 
 export interface A11yDialogOutcomeEventDetail extends A11yDialogOutcomeContext {
-  instance: A11yDialogOutcome;
+  instance: A11yDialogOutcomeInstance;
   message: string;
 }
 
@@ -101,6 +101,17 @@ export const A11Y_DIALOG_OUTCOME_ATTRIBUTES = Object.freeze({
 export const A11Y_DIALOG_OUTCOME_EVENTS = Object.freeze({
   update: "a11y-dialog-outcome:update"
 });
+
+export type A11yDialogOutcomeEventName =
+  (typeof A11Y_DIALOG_OUTCOME_EVENTS)[keyof typeof A11Y_DIALOG_OUTCOME_EVENTS];
+
+export interface A11yDialogOutcomeEventMap {
+  [A11Y_DIALOG_OUTCOME_EVENTS.update]: A11yDialogOutcomeEventDetail;
+}
+
+export type A11yDialogOutcomeLifecycleEvent<
+  Name extends A11yDialogOutcomeEventName = A11yDialogOutcomeEventName
+> = CustomEvent<A11yDialogOutcomeEventMap[Name]>;
 
 export const DEFAULT_A11Y_DIALOG_OUTCOME_OPTIONS = Object.freeze({
   defaultMessage: "Dialog closed.",
@@ -401,8 +412,12 @@ export class A11yDialogOutcome implements A11yDialogOutcomeInstance {
 
     this.statusTarget.textContent = resolvedMessage;
     this.dialog.dispatchEvent(
-      new CustomEvent<A11yDialogOutcomeEventDetail>(A11Y_DIALOG_OUTCOME_EVENTS.update, {
+      new CustomEvent<
+        A11yDialogOutcomeEventMap[typeof A11Y_DIALOG_OUTCOME_EVENTS.update]
+      >(A11Y_DIALOG_OUTCOME_EVENTS.update, {
         bubbles: true,
+        composed: false,
+        cancelable: false,
         detail: {
           ...detailContext,
           instance: this,

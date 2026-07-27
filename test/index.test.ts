@@ -194,6 +194,141 @@ describe("A11y Dialog", () => {
     ]);
   });
 
+  it("dispatches cancelable before events in lifecycle order", () => {
+    const { dialog, trigger } = createMarkup();
+    const events: string[] = [];
+    const instance = createA11yDialog(dialog);
+
+    for (const name of [
+      A11Y_DIALOG_EVENTS.beforeOpen,
+      A11Y_DIALOG_EVENTS.open,
+      A11Y_DIALOG_EVENTS.beforeClose,
+      A11Y_DIALOG_EVENTS.close
+    ]) {
+      dialog.addEventListener(name, (event) => {
+        events.push(event.type);
+        if (name === A11Y_DIALOG_EVENTS.beforeOpen || name === A11Y_DIALOG_EVENTS.beforeClose) {
+          expect(event.cancelable).toBe(true);
+          expect((event as CustomEvent).detail.trigger).toBe(trigger);
+        }
+      });
+    }
+
+    instance.open(trigger);
+    instance.close();
+
+    expect(events).toEqual([
+      A11Y_DIALOG_EVENTS.beforeOpen,
+      A11Y_DIALOG_EVENTS.open,
+      A11Y_DIALOG_EVENTS.beforeClose,
+      A11Y_DIALOG_EVENTS.close
+    ]);
+  });
+
+  it("uses the dialog target and explicit public event options", () => {
+    const { dialog, trigger } = createMarkup();
+    const received: CustomEvent[] = [];
+
+    for (const name of Object.values(A11Y_DIALOG_EVENTS)) {
+      dialog.addEventListener(name, (event) => received.push(event as CustomEvent));
+    }
+
+    const instance = createA11yDialog(dialog);
+    instance.open(trigger);
+    instance.close();
+    instance.destroy();
+
+    expect(Object.isFrozen(A11Y_DIALOG_EVENTS)).toBe(true);
+    expect(Object.values(A11Y_DIALOG_EVENTS).every((name) => name.startsWith("a11y-dialog:"))).toBe(true);
+    expect(received.map((event) => event.type)).toEqual([
+      A11Y_DIALOG_EVENTS.init,
+      A11Y_DIALOG_EVENTS.ready,
+      A11Y_DIALOG_EVENTS.beforeOpen,
+      A11Y_DIALOG_EVENTS.open,
+      A11Y_DIALOG_EVENTS.change,
+      A11Y_DIALOG_EVENTS.beforeClose,
+      A11Y_DIALOG_EVENTS.close,
+      A11Y_DIALOG_EVENTS.change,
+      A11Y_DIALOG_EVENTS.destroy
+    ]);
+    expect(new Set(received.map((event) => event.detail)).size).toBe(received.length);
+    expect(received.find((event) => event.type === A11Y_DIALOG_EVENTS.open)?.detail.open).toBe(true);
+    expect(received.find((event) => event.type === A11Y_DIALOG_EVENTS.close)?.detail.open).toBe(false);
+
+    for (const event of received) {
+      expect(event.target).toBe(dialog);
+      expect(event.bubbles).toBe(true);
+      expect(event.composed).toBe(false);
+      expect(event.cancelable).toBe(
+        event.type === A11Y_DIALOG_EVENTS.beforeOpen ||
+          event.type === A11Y_DIALOG_EVENTS.beforeClose
+      );
+      expect(event.detail.dialog).toBe(dialog);
+      expect(event.detail.instance).toBe(instance);
+    }
+  });
+
+  it("does not emit duplicate state events for no-op open and close calls", () => {
+    const { dialog, trigger } = createMarkup();
+    const instance = createA11yDialog(dialog);
+    const events: string[] = [];
+
+    for (const name of [A11Y_DIALOG_EVENTS.open, A11Y_DIALOG_EVENTS.close, A11Y_DIALOG_EVENTS.change]) {
+      dialog.addEventListener(name, (event) => events.push(event.type));
+    }
+
+    instance.open(trigger);
+    instance.open(trigger);
+    instance.close();
+    instance.close();
+
+    expect(events).toEqual([
+      A11Y_DIALOG_EVENTS.open,
+      A11Y_DIALOG_EVENTS.change,
+      A11Y_DIALOG_EVENTS.close,
+      A11Y_DIALOG_EVENTS.change
+    ]);
+  });
+
+  it("reports native close without a before-close event", () => {
+    const { dialog, trigger } = createMarkup();
+    const instance = createA11yDialog(dialog);
+    const events: string[] = [];
+
+    for (const name of [
+      A11Y_DIALOG_EVENTS.beforeClose,
+      A11Y_DIALOG_EVENTS.close,
+      A11Y_DIALOG_EVENTS.change
+    ]) {
+      dialog.addEventListener(name, (event) => events.push(event.type));
+    }
+
+    instance.open(trigger);
+    events.length = 0;
+    dialog.close();
+
+    expect(events).toEqual([A11Y_DIALOG_EVENTS.close, A11Y_DIALOG_EVENTS.change]);
+  });
+
+  it("blocks state changes when a before event is prevented", () => {
+    const { dialog, trigger } = createMarkup();
+    const instance = createA11yDialog(dialog);
+    const preventOpen = (event: Event) => event.preventDefault();
+
+    dialog.addEventListener(A11Y_DIALOG_EVENTS.beforeOpen, preventOpen);
+    instance.open(trigger);
+    expect(instance.isOpen()).toBe(false);
+
+    dialog.removeEventListener(A11Y_DIALOG_EVENTS.beforeOpen, preventOpen);
+    instance.open(trigger);
+    dialog.addEventListener(A11Y_DIALOG_EVENTS.beforeClose, (event) => event.preventDefault(), {
+      once: true
+    });
+    instance.close();
+
+    expect(instance.isOpen()).toBe(true);
+  });
+
   it("closes with Escape and restores focus to the opener", () => {
     const { dialog, trigger } = createMarkup();
     const instance = createA11yDialog(dialog);
@@ -370,6 +505,32 @@ describe("A11y Dialog", () => {
 
     const second = createA11yDialog(dialog);
     expect(second).not.toBe(first);
+  });
+
+  it("closes an open dialog before destroy without exposing cancellation", () => {
+    const { dialog, trigger } = createMarkup();
+    const instance = createA11yDialog(dialog);
+    const events: string[] = [];
+
+    for (const name of [
+      A11Y_DIALOG_EVENTS.beforeClose,
+      A11Y_DIALOG_EVENTS.close,
+      A11Y_DIALOG_EVENTS.change,
+      A11Y_DIALOG_EVENTS.destroy
+    ]) {
+      dialog.addEventListener(name, (event) => events.push(event.type));
+    }
+
+    instance.open(trigger);
+    events.length = 0;
+    instance.destroy();
+    instance.destroy();
+
+    expect(events).toEqual([
+      A11Y_DIALOG_EVENTS.close,
+      A11Y_DIALOG_EVENTS.change,
+      A11Y_DIALOG_EVENTS.destroy
+    ]);
   });
 
   it("throws when the dialog has no labelled heading reference", () => {

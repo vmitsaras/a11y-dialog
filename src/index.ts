@@ -1,3 +1,9 @@
+import {
+  getRegisteredDialogInstance,
+  registerDialogInstance,
+  unregisterDialogInstance
+} from "./instance-registry";
+
 export interface A11yDialogOptions {
   /**
    * Element or selector to focus when the dialog opens. Falls back to
@@ -51,14 +57,14 @@ interface NormalizedA11yDialogOptions {
   requireLabel: boolean;
 }
 
-type A11yDialogEventDetail = {
-  instance: A11yDialog;
+export type A11yDialogEventDetail = {
+  instance: A11yDialogInstance;
   dialog: HTMLDialogElement;
   trigger: HTMLElement | null;
   open: boolean;
 };
 
-type A11yDialogEventName =
+export type A11yDialogEventName =
   (typeof A11Y_DIALOG_EVENTS)[keyof typeof A11Y_DIALOG_EVENTS];
 
 const COMPONENT_NAME = "a11y-dialog";
@@ -87,11 +93,28 @@ export const A11Y_DIALOG_ATTRIBUTES = Object.freeze({
 export const A11Y_DIALOG_EVENTS = Object.freeze({
   init: `${COMPONENT_NAME}:init`,
   ready: `${COMPONENT_NAME}:ready`,
+  beforeOpen: `${COMPONENT_NAME}:before-open`,
   open: `${COMPONENT_NAME}:open`,
+  beforeClose: `${COMPONENT_NAME}:before-close`,
   close: `${COMPONENT_NAME}:close`,
   change: `${COMPONENT_NAME}:change`,
   destroy: `${COMPONENT_NAME}:destroy`
 });
+
+export interface A11yDialogEventMap {
+  [A11Y_DIALOG_EVENTS.init]: A11yDialogEventDetail;
+  [A11Y_DIALOG_EVENTS.ready]: A11yDialogEventDetail;
+  [A11Y_DIALOG_EVENTS.beforeOpen]: A11yDialogEventDetail;
+  [A11Y_DIALOG_EVENTS.open]: A11yDialogEventDetail;
+  [A11Y_DIALOG_EVENTS.beforeClose]: A11yDialogEventDetail;
+  [A11Y_DIALOG_EVENTS.close]: A11yDialogEventDetail;
+  [A11Y_DIALOG_EVENTS.change]: A11yDialogEventDetail;
+  [A11Y_DIALOG_EVENTS.destroy]: A11yDialogEventDetail;
+}
+
+export type A11yDialogLifecycleEvent<
+  Name extends A11yDialogEventName = A11yDialogEventName
+> = CustomEvent<A11yDialogEventMap[Name]>;
 
 export const DEFAULT_A11Y_DIALOG_OPTIONS = Object.freeze({
   initialFocus: null,
@@ -363,7 +386,8 @@ export class A11yDialog implements A11yDialogInstance {
       throw new TypeError("A11yDialog must be initialized with a <dialog> element.");
     }
 
-    const existingInstance = A11yDialog.instances.get(dialog);
+    const existingInstance =
+      getRegisteredDialogInstance<A11yDialog>(dialog) ?? A11yDialog.instances.get(dialog);
 
     if (existingInstance) {
       return existingInstance;
@@ -377,6 +401,7 @@ export class A11yDialog implements A11yDialogInstance {
     validateDialogMarkup(dialog, this.options);
 
     A11yDialog.instances.set(dialog, this);
+    registerDialogInstance(dialog, this);
     this.bindEvents();
     this.dialog.classList.add(A11Y_DIALOG_CLASSES.initialized);
     this.dispatchLifecycleEvent(A11Y_DIALOG_EVENTS.init);
@@ -391,6 +416,10 @@ export class A11yDialog implements A11yDialogInstance {
     }
 
     this.restoreTarget = trigger;
+
+    if (!this.dispatchLifecycleEvent(A11Y_DIALOG_EVENTS.beforeOpen, true)) {
+      return;
+    }
 
     try {
       if (typeof this.dialog.showModal === "function") {
@@ -414,6 +443,14 @@ export class A11yDialog implements A11yDialogInstance {
       return;
     }
 
+    if (!this.dispatchLifecycleEvent(A11Y_DIALOG_EVENTS.beforeClose, true)) {
+      return;
+    }
+
+    this.closeImmediately();
+  }
+
+  private closeImmediately(): void {
     if (typeof this.dialog.close === "function") {
       this.dialog.close();
     } else {
@@ -428,7 +465,7 @@ export class A11yDialog implements A11yDialogInstance {
     }
 
     if (this.isOpen()) {
-      this.close();
+      this.closeImmediately();
     }
 
     this.unbindEvents();
@@ -442,6 +479,7 @@ export class A11yDialog implements A11yDialogInstance {
 
     this.destroyed = true;
     A11yDialog.instances.delete(this.dialog);
+    unregisterDialogInstance(this.dialog, this);
     this.dispatchLifecycleEvent(A11Y_DIALOG_EVENTS.destroy);
   }
 
@@ -567,7 +605,7 @@ export class A11yDialog implements A11yDialogInstance {
     }
   }
 
-  private dispatchLifecycleEvent(name: A11yDialogEventName): void {
+  private dispatchLifecycleEvent(name: A11yDialogEventName, cancelable = false): boolean {
     const detail: A11yDialogEventDetail = {
       instance: this,
       dialog: this.dialog,
@@ -575,9 +613,11 @@ export class A11yDialog implements A11yDialogInstance {
       open: this.isOpen()
     };
 
-    this.dialog.dispatchEvent(
-      new CustomEvent(name, {
+    return this.dialog.dispatchEvent(
+      new CustomEvent<A11yDialogEventMap[typeof name]>(name, {
         bubbles: true,
+        composed: false,
+        cancelable,
         detail
       })
     );

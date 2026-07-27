@@ -1,6 +1,6 @@
 {
-  "name": "a11y-dialog",
-  "version": "0.0.0",
+  "name": "@vmitsaras/a11y-dialog",
+  "version": "1.0.0",
   "description": "A framework-agnostic native dialog helper with accessible focus, keyboard, lifecycle, and cleanup behavior.",
   "type": "module",
   "license": "MIT",
@@ -8,6 +8,9 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/vmitsaras/a11y-dialog.git"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "keywords": [
     "accessibility",
@@ -44,18 +47,30 @@
       "types": "./dist/async-action.d.ts",
       "import": "./dist/async-action.js"
     },
+    "./diagnostics": {
+      "types": "./dist/diagnostics.d.ts",
+      "import": "./dist/diagnostics.js"
+    },
+    "./morph": {
+      "types": "./dist/morph.d.ts",
+      "import": "./dist/morph.js"
+    },
+    "./morph.css": "./dist/morph.css",
     "./styles.css": "./dist/styles.css",
     "./package.json": "./package.json"
   },
   "scripts": {
     "clean": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\"",
     "copy:styles": "node scripts/copy-styles.mjs",
-    "build": "npm run clean && tsdown && npm run copy:styles",
-    "build:pages": "npm run build && node scripts/build-pages.mjs",
+    "build": "npm run pages:build",
+    "build:dist": "npm run clean && tsdown && npm run copy:styles",
+    "build:pages": "npm run pages:build",
+    "pages:build": "npm run build:dist && npm run pages:generate",
+    "pages:generate": "node scripts/build-pages.mjs",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "pack:check": "npm pack --dry-run",
-    "prepack": "npm run build",
+    "prepack": "npm run build:dist",
     "changeset": "changeset",
     "version-packages": "changeset version",
     "release": "changeset publish"
